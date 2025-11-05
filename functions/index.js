@@ -118,36 +118,59 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
 
 /**
  * Função auxiliar para criar portal de gerenciamento de assinatura
- * Configurada com CORS para aceitar requisições do Netlify
+ * Versão onRequest com CORS manual (mais compatível)
  */
-exports.createPortalLink = functions.https.onCall(async (data, context) => {
-    if (!context.auth) {
-        throw new functions.https.HttpsError('unauthenticated', 'Usuário não autenticado');
+exports.createPortalLink = functions.https.onRequest(async (req, res) => {
+    // CORS headers
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.set('Access-Control-Max-Age', '3600');
+
+    // Handle preflight
+    if (req.method === 'OPTIONS') {
+        res.status(204).send('');
+        return;
     }
 
-    const uid = context.auth.uid;
-    console.log('📋 Portal solicitado para UID:', uid);
+    // Só aceita POST
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method not allowed' });
+    }
 
     try {
+        // Pega o token de autenticação
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(401).json({ error: 'Não autenticado' });
+        }
+
+        const idToken = authHeader.split('Bearer ')[1];
+        const decodedToken = await admin.auth().verifyIdToken(idToken);
+        const uid = decodedToken.uid;
+
+        console.log('📋 Portal solicitado para UID:', uid);
+
         const userDoc = await db.collection('users').doc(uid).get();
         const userData = userDoc.data();
 
         if (!userData || !userData.stripeCustomerId) {
             console.error('❌ Cliente Stripe não encontrado para UID:', uid);
-            throw new functions.https.HttpsError('not-found', 'Cliente Stripe não encontrado');
+            return res.status(404).json({ error: 'Cliente Stripe não encontrado' });
         }
 
         console.log('✅ Criando portal para customer:', userData.stripeCustomerId);
 
+        const returnUrl = req.body.returnUrl || 'https://padariapro.netlify.app/';
         const session = await stripe.billingPortal.sessions.create({
             customer: userData.stripeCustomerId,
-            return_url: data.returnUrl || 'https://padariapro.netlify.app/',
+            return_url: returnUrl,
         });
 
         console.log('✅ Portal URL criada:', session.url);
-        return { url: session.url };
+        return res.status(200).json({ url: session.url });
     } catch (error) {
         console.error('❌ Erro ao criar portal link:', error);
-        throw new functions.https.HttpsError('internal', error.message);
+        return res.status(500).json({ error: error.message });
     }
 });

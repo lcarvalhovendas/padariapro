@@ -909,16 +909,29 @@ window.openStripeCheckout = function() {
       </div>`; },
     async manageSubscription(){
       try{
-        const uid=firebase.auth().currentUser?.uid;
-        if(!uid){ UI.toast('Usuário não autenticado','error'); return; }
-        const userDoc=await firebase.firestore().collection('users').doc(uid).get();
+        const user=firebase.auth().currentUser;
+        if(!user){ UI.toast('Usuário não autenticado','error'); return; }
+        const userDoc=await firebase.firestore().collection('users').doc(user.uid).get();
         const customerId=userDoc.data()?.stripeCustomerId;
         if(!customerId){ UI.toast('Cliente Stripe não encontrado','error'); return; }
         UI.toast('Abrindo portal...','normal');
-        const createPortalLink=firebase.functions().httpsCallable('createPortalLink');
-        const result=await createPortalLink({returnUrl:window.location.origin});
-        if(result.data?.url){ window.location.href=result.data.url; }
-        else{ UI.toast('Erro ao criar portal','error'); }
+        
+        // Pega token de autenticação
+        const token=await user.getIdToken();
+        
+        // Chama função via fetch com CORS
+        const response=await fetch('https://us-central1-padariapro-d0759.cloudfunctions.net/createPortalLink', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({returnUrl: window.location.origin})
+        });
+        
+        const result=await response.json();
+        if(result.url){ window.location.href=result.url; }
+        else{ UI.toast('Erro ao criar portal: '+(result.error||'desconhecido'),'error'); }
       }catch(e){ console.error(e); UI.toast('Erro ao acessar portal: '+e.message,'error'); }
     },
     cancelSubscription(){
