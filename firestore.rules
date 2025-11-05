@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Regras para coleção de usuários
+    match /users/{userId} {
+      // Usuário pode ler e escrever apenas seus próprios dados
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // Impede que usuário altere o campo 'plan' diretamente (apenas via webhook)
+      allow update: if request.auth != null 
+                    && request.auth.uid == userId
+                    && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['plan', 'stripeCustomerId', 'subscriptionStatus']));
+    }
+  }
+}

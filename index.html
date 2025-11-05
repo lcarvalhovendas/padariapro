@@ -1,0 +1,1632 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#6D4C41" />
+  
+  <!-- SEO Meta Tags -->
+  <title>PadariaPro - Calculadora de Preços para Panificação | Calcule Custos e Lucros</title>
+  <meta name="description" content="Calculadora profissional para panificadores. Gerencie ingredientes, receitas e calcule preços com precisão. Controle custos, margem de lucro e maximize seus resultados." />
+  <meta name="keywords" content="calculadora padaria, preço pão, custo panificação, receita padaria, gestão padaria, calculadora confeitaria, lucro padaria, precificação alimentos" />
+  <meta name="author" content="PadariaPro" />
+  <meta name="robots" content="index, follow" />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="PadariaPro - Calculadora de Preços para Panificação" />
+  <meta property="og:description" content="Gerencie ingredientes, receitas e calcule preços com precisão para sua padaria ou confeitaria." />
+  <meta property="og:image" content="https://padariapro.com/og-image.jpg" />
+  <meta property="og:url" content="https://padariapro.com" />
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="PadariaPro - Calculadora de Preços para Panificação" />
+  <meta name="twitter:description" content="Calculadora profissional para panificadores. Gerencie custos e maximize lucros." />
+  <meta name="twitter:image" content="https://padariapro.com/twitter-image.jpg" />
+  
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <style>
+/* Cole este novo CSS substituindo TODO o conteúdo dentro da tag <style> */
+:root {
+  /* NOVA PALETA: "Artesanal Sofisticado" */
+  --primary: #5D4037; /* Marrom "Espresso" mais profundo e rico */
+  --accent: #D4A574;  /* "Caramelo" / Dourado (antigo --gold) */
+  --accent-dark: #C89B6A;
+  --bg: #FBF9F7;      /* Fundo "Creme", mais quente que o branco */
+  --card: #ffffff;    /* Cartões brancos para contraste */
+  --text: #2C2827;      /* Texto quase preto, mas suave */
+  --muted: #79716E;      /* Muted mais quente */
+  --border: #EDEAE8;     /* Borda muito sutil */
+  --input-bg: #FBF9F7;  /* Fundo do input igual ao BG */
+  --success: #388E3C;
+  --error: #D32F2F;
+  --shadow: 0 8px 24px rgba(93, 64, 55, 0.08); /* Sombra mais suave e profissional */
+  --shadow-sm: 0 3px 8px rgba(93, 64, 55, 0.05);
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.app { width: 100%; max-width: 1600px; margin: 0 auto; padding: 0 24px 82px; }
+
+/* Header (Appbar) */
+header.appbar {
+  position: sticky;
+  top: 0;
+  background: var(--card);
+  box-shadow: var(--shadow-sm); /* Sombra sutil para destacar */
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 16px; /* Mais respiro */
+  z-index: 10;
+}
+.logo-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--primary), var(--accent)); /* Gradiente Premium */
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 14px;
+}
+header.appbar h1 { font-size: 19px; font-weight: 700; margin: 0; flex: 1; text-align: center; }
+
+/* Navegação (Tabs) */
+.tabs {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--card);
+  border-top: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px; /* Espaço sutil */
+  padding: 8px 10px;
+  box-shadow: 0 -8px 24px rgba(93, 64, 55, 0.07); /* Sombra elevada */
+}
+.tabs button {
+  border: none;
+  background: transparent;
+  padding: 6px 4px;
+  border-radius: 10px;
+  color: var(--muted);
+  font-size: 10px; /* Mais delicado */
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+}
+.tabs button.active {
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+}
+.tabs button:not(.active):hover { background-color: var(--bg); }
+
+/* Containers */
+.container { padding: 16px; }
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px; /* Mais arredondado */
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+
+/* Layout */
+.grid { display: grid; gap: 14px; }
+.grid.cols-2 { grid-template-columns: 1fr 1fr; }
+@media(min-width: 720px) { .grid.cols-3 { grid-template-columns: repeat(3, 1fr); } }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.section { display: grid; gap: 10px; }
+.section h4 { margin: 0 0 2px 0; }
+
+/* Desktop refinements */
+@media (min-width: 1024px){
+  html { font-size: 16px; }
+  .app { width: 100%; max-width: 1280px; padding: 0 24px 96px; }
+  main.container { width: 100%; max-width: 1280px; margin: 0 auto; padding: 24px; }
+  .grid { gap: 18px; }
+  .grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .tabs { max-width: 1200px; margin: 0 auto; left: 50%; transform: translateX(-50%); }
+}
+@media (min-width: 1440px){
+  html { font-size: 17px; }
+  .app { max-width: 1400px; }
+  main.container { max-width: 1400px; }
+  .tabs { max-width: 1400px; }
+}
+
+/* Botões (Botões) */
+.btn {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 18px; /* Mais "tocável" */
+  background: var(--primary);
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+.btn.secondary {
+  background: var(--card);
+  color: var(--primary);
+  border: 1px solid var(--border);
+  box-shadow: none;
+}
+.btn.secondary:hover:not(:disabled) {
+  background: var(--bg);
+  border-color: var(--muted);
+  transform: none;
+  box-shadow: none;
+}
+.btn.error { background: var(--error); }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Formulários (Inputs) */
+.input, select.input, textarea.input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--input-bg);
+  color: inherit;
+  font-family: inherit;
+  font-size: 15px;
+}
+.input:focus, select.input:focus, button.btn:focus {
+  outline: none;
+  border-color: var(--accent); /* Foco no "Caramelo" */
+  box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.2);
+}
+.hint { font-size: 13px; color: var(--muted); }
+
+/* Componentes de UI */
+.hero {
+  background: linear-gradient(120deg, var(--primary) 0%, #856156 100%);
+  color: #fff;
+  border-radius: 20px;
+  padding: 24px 20px;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  align-content: center;
+}
+.hero h2 { margin: 0; font-size: 26px; }
+.hero p { margin: 4px 0 0 0; opacity: .9; font-size: 15px; }
+
+/* Inline hero art positioning */
+.hero svg.art { position:absolute; right:-8px; top:-8px; width:120px; height:auto; opacity:.16; filter: drop-shadow(0 4px 10px rgba(0,0,0,.15)); }
+
+/* Icon sizing */
+.tabs button svg.icon{ width:22px; height:22px; display:block; margin:0 auto 4px; }
+.list .icon svg{ width:28px; height:28px; display:block; }
+
+.list { display: grid; gap: 10px; }
+.list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+  box-shadow: var(--shadow-sm); /* Sombra leve nos itens */
+  gap: 8px; /* Espaço para os botões */
+}
+.list-item .info { display: grid; gap: 4px; }
+.list-item .title { font-weight: 600; }
+.list-item .sub { font-size: 12px; color: var(--muted); }
+.icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg); /* Fundo "Creme" */
+  font-size: 18px; /* Emoji maior */
+}
+.help-btn {
+  margin-left: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--muted);
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+.toast {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 70px; /* Posição inicial */
+  background: #333;
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 12px;
+  z-index: 99;
+  opacity: 0;
+  transition: opacity 0.3s, bottom 0.3s;
+  box-shadow: var(--shadow);
+}
+.toast.show {
+  opacity: 1;
+  bottom: 90px;
+  display: block; /* Garante visibilidade */
+}
+.toast.error { background: var(--error); color: #fff; }
+.toast.success { background: var(--success); color: #fff; }
+
+.chip {
+  font-size: 12px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  border-radius: 999px;
+  color: var(--muted);
+  font-weight: 500;
+}
+.modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.modal.show { display: flex; }
+.modal .backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(44, 40, 39, 0.8); /* Backdrop mais escuro */
+  backdrop-filter: blur(4px); /* Efeito de vidro (se o browser suportar) */
+}
+.modal .sheet {
+  position: relative;
+  max-width: 720px;
+  width: 92%;
+  max-height: 80vh;
+  overflow: auto;
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+}
+.modal .close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 24px;
+  cursor: pointer;
+}
+/* Estilo para acordeons de ajuda */
+details {
+  margin: 8px 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  background: var(--bg);
+  transition: all 0.2s;
+}
+details[open] {
+  background: var(--card);
+  box-shadow: var(--shadow-sm);
+}
+summary {
+  cursor: pointer;
+  user-select: none;
+  font-weight: 600;
+  color: var(--text);
+  list-style: none;
+  padding: 4px 0;
+}
+summary::-webkit-details-marker {
+  display: none;
+}
+summary::before {
+  content: '▶';
+  display: inline-block;
+  margin-right: 8px;
+  transition: transform 0.2s;
+  color: var(--accent);
+}
+details[open] summary::before {
+  transform: rotate(90deg);
+}
+details p {
+  margin: 12px 0 4px 20px;
+  line-height: 1.6;
+  color: var(--text);
+}
+  </style>
+  <!-- Firebase SDK (compat) -->
+  <!-- Carregado antes do fechamento de </head> para garantir disponibilidade global -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-functions-compat.js"></script>
+    <!-- Stripe.js -->
+  <script src="https://js.stripe.com/v3/"></script>
+  
+  <!-- 🆕 FUNÇÃO GLOBAL STRIPE CHECKOUT (DEFINIDA CEDO) -->
+  <script>
+window.openStripeCheckout = function() {
+  try {
+    const user = firebase.auth().currentUser;
+
+    if (!user || !user.uid) {
+      console.error("❌ Usuário não autenticado");
+      if (window.UI?.toast) {
+        window.UI.toast("Você não está autenticado. Faça login e tente novamente.", "error");
+      }
+      return;
+    }
+
+    console.log("✅ User autenticado:", user.uid);
+
+    // ✅ Enviando apenas o UID via client_reference_id
+    const stripeUrl = `https://buy.stripe.com/test_00w3cvfVgbJB8hjcOqdnW01?client_reference_id=${user.uid}`;
+    console.log("🔗 Redirecionando para:", stripeUrl);
+    window.location.href = stripeUrl;
+
+  } catch (error) {
+    console.error("Erro ao abrir Stripe Checkout:", error);
+  }
+};
+
+  </script>
+</head>
+<body>
+  <!-- LOGIN MODAL (Firebase) -->
+  <div id="loginModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; align-items: center; justify-content: center; flex-direction: column;">
+    <div style="background: white; padding: 40px; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+      <h1 style="margin: 0 0 10px 0; text-align: center; color: #6D4C41; font-size: 28px;">🍞 PadariaPro</h1>
+      <p style="margin: 0 0 30px 0; text-align: center; color: #999; font-size: 14px;">Calculadora de preço para padarias</p>
+      <div id="loginView">
+        <h3 style="margin: 0 0 20px 0; color: #333;">Fazer Login</h3>
+        <input type="email" id="loginEmail" placeholder="Email" style="width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 14px;">
+        <input type="password" id="loginPassword" placeholder="Senha" style="width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 14px;">
+        <button onclick="handleLogin()" style="width: 100%; padding: 12px; background: #6D4C41; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin: 20px 0; font-size: 14px;">🔓 Entrar</button>
+        <p style="text-align: center; color: #666; font-size: 14px;">Não tem conta? <a href="#" onclick="showRegisterView(); return false;" style="color: #FF6B35; text-decoration: none; font-weight: bold;">Crie uma aqui</a></p>
+      </div>
+      <div id="registerView" style="display: none;">
+        <h3 style="margin: 0 0 20px 0; color: #333;">Criar Conta</h3>
+        <input type="email" id="registerEmail" placeholder="Email" style="width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 14px;">
+        <input type="password" id="registerPassword" placeholder="Senha (mín 6 caracteres)" style="width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 14px;">
+        <button onclick="handleRegister()" style="width: 100%; padding: 12px; background: #FF6B35; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin: 20px 0; font-size: 14px;">✓ Criar Conta</button>
+        <p style="text-align: center; color: #666; font-size: 14px;">Já tem conta? <a href="#" onclick="showLoginView(); return false;" style="color: #FF6B35; text-decoration: none; font-weight: bold;">Faça login</a></p>
+      </div>
+    </div>
+  </div>
+  <div id="app" class="app" data-theme="light">
+    <header class="appbar">
+      <div class="logo-badge" aria-label="PadariaPro">
+        <svg viewBox="0 0 64 64" width="26" height="26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="gBadge" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0" stop-color="#6D4C41"/>
+              <stop offset="1" stop-color="#C89B6A"/>
+            </linearGradient>
+          </defs>
+          <circle cx="32" cy="32" r="28" fill="url(#gBadge)" opacity="0"/>
+          <g transform="translate(8,10)">
+            <path fill="#fff" fill-opacity="0.95" d="M12 26c0-6 4.9-11 11-11h10c6.1 0 11 4.9 11 11v6c0 2.2-1.8 4-4 4H16c-2.2 0-4-1.8-4-4v-6z"/>
+            <path fill="#5D4037" d="M23 19h4v4h-4zm8 0h4v4h-4zm-6 7h6v4h-6z"/>
+            <path fill="#fff" d="M5 23c2.5-2.5 5-5 5-5s2 1 0 3-3 3-3 3-1 1-2-1z" opacity="0.9"/>
+            <path fill="#fff" d="M45 23c-2.5-2.5-5-5-5-5s-2 1 0 3 3 3 3 3 1 1 2-1z" opacity="0.9"/>
+          </g>
+        </svg>
+      </div>
+      <button class="btn secondary" onclick="Router.back()" aria-label="Voltar">←</button>
+      <h1 id="title">Dashboard</h1>
+      <button class="btn secondary" onclick="UI.menu()" aria-label="Menu">⋮</button>
+    </header>
+    <main id="view" class="container"></main>
+    <nav class="tabs">
+      <button id="tab-dashboard" onclick="console.log('Botão Início clicado'); Router.go('dashboard');"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M3 10l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9z"/></svg>Início</button>
+      <button id="tab-ingredients" onclick="Router.go('ingredients')"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M7 2c1.7 0 3 1.3 3 3 0 1-.5 1.9-1.3 2.5L15 14v6h-2v-5l-6-6.1C6.4 9 6 10 6 11v9H4V11C4 6.6 7 2 7 2z"/></svg>Ingredientes</button>
+      <button id="tab-packages" onclick="Router.go('packages')"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M21 8.5l-9-4-9 4V19l9 4 9-4V8.5zM12 6.2l6.5 2.9L12 12 5.5 9.1 12 6.2zM6 11l6 2.8V20l-6-2.7V11zm8 9v-6.2L20 11v6.3L14 20z"/></svg>Embalagens</button>
+      <button id="tab-recipes" onclick="Router.go('recipes')"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M6 2h9l3 3v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm8 3h2l-2-2v2zM8 8h8v2H8V8zm0 4h8v2H8v-2zm0 4h6v2H8v-2z"/></svg>Receitas</button>
+      <button id="tab-calculator" onclick="Router.go('calculator')"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm2 2v4h8V4H8zm0 6h3v3H8v-3zm5 0h3v3h-3v-3zM8 14h3v3H8v-3zm5 0h3v3h-3v-3z"/></svg>Preço</button>
+      <button id="tab-profile" onclick="Router.go('profile')"><svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M12 8a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-4.4 0-8 2.2-8 5v3h16v-3c0-2.8-3.6-5-8-5z"/></svg>Perfil</button>
+    </nav>
+  </div>
+  <div id="toast" class="toast"></div>
+
+  <script>
+  const STORAGE_KEY='padariapro_v3_state';
+  const AUTH_USERS_KEY='padariapro_users';
+  const AUTH_CURRENT_KEY='padariapro_currentUser';
+  // ===== LIMITES POR PLANO =====
+  // Mapeia cotas e limites de uso para cada plano
+  // - free: limites de ingredientes, receitas, embalagens e cálculos/mês
+  // - pro: sem limites (Infinity)
+  const Limits={free:{ingredients:10,packages:5,recipes:3,calculationsPerMonth:10},pro:{ingredients:Infinity,packages:Infinity,recipes:Infinity,calculationsPerMonth:Infinity}};
+  // ===== PLANMANAGER =====
+  // Gerencia leitura do plano atual e validação de limites
+  // - limitFor(type): retorna o limite para o recurso no plano atual
+  // - ensureCanAdd(type): bloqueia criação quando limite for atingido (FREE)
+  const PlanManager={
+    plan(){ return (App.state.user.plan||'free'); },
+    isFree(){ return this.plan()==='free'; },
+    isPro(){ return this.plan()==='pro'; },
+    limitFor(type){ return Limits[this.plan()][type]; },
+    hasReached(type){ const curr=(App.state[type]||[]).length; const lim=this.limitFor(type); return Number.isFinite(lim) && curr>=lim; },
+    ensureCanAdd(type, friendly){ if(this.isFree() && this.hasReached(type)){ UI.toast(friendly||'Limite atingido no plano Free','error'); UI.upgrade(type); return false } return true; }
+  }
+  const defaultState={user:{name:'',email:'',plan:'free'},ingredients:[],packages:[],recipes:[],calculations:[],settings:{equipment:{type:'electric',electric:{kwhPrice:0.68,ovenKw:1800},gas:{kgPrice:8.0,kgPerHour:0.3},wood:{kgPrice:2.5,kgPerHour:2.0}}},limitsUsed:{ingredientsThisMonth:0,recipesThisMonth:0,calculationsThisMonth:0,monthKey:''},setup:{equipmentDone:false,ingredientsDone:false,recipeDone:false},seenWelcome:false};
+  function loadState(){try{const r=localStorage.getItem(STORAGE_KEY);if(!r)return structuredClone(defaultState);const s=JSON.parse(r);s.settings=Object.assign({darkMode:false},s.settings||{});s.limitsUsed=Object.assign({ingredientsThisMonth:0,recipesThisMonth:0,calculationsThisMonth:0,monthKey:''},s.limitsUsed||{});return s;}catch{return structuredClone(defaultState)}}
+  const App={state:loadState(),save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(this.state))}catch(e){console.warn('App.save error',e)}UI.theme();},reset(){this.state=structuredClone(defaultState);this.save();UI.toast('Resetado','success');Router.go('dashboard');},monthKey(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,'0')}}
+  // ===== APPLY PLAN RESTRICTIONS =====
+  // Aplica bloqueios/estados visuais conforme o plano ativo
+  // - Desabilita campos avançados no FREE (margem, markup, fixo, estratégia)
+  // - Desabilita edição de equipamentos no FREE
+  function applyPlanRestrictions(){ try{
+    const plan=(App.state.user.plan||'free');
+    // Calculadora: margem/markup/estratégia e preço fixo
+    const marginInput=document.getElementById('c_margin');
+    const markupInput=document.getElementById('c_markup');
+    const priceFixed=document.getElementById('c_price_fixed');
+    const stratSel=document.getElementById('c_price_strategy');
+    const fldMargin=document.getElementById('fld_margin');
+    const fldMarkup=document.getElementById('fld_markup');
+    const fldFixed=document.getElementById('fld_price_fixed');
+    const setProBadge=(el)=>{ if(!el) return; const lbl=el.querySelector('h4'); if(lbl && !lbl.dataset.badged){ lbl.innerHTML += " <span style='color:#FF6B35;font-size:11px;font-weight:700;'>💎 PRO</span>"; lbl.dataset.badged='1'; } };
+    if(plan==='free'){
+      if(marginInput){ marginInput.disabled=true; marginInput.style.backgroundColor='#f0f0f0'; marginInput.style.color='#999'; marginInput.style.cursor='not-allowed'; setProBadge(fldMargin); }
+      if(markupInput){ markupInput.disabled=true; markupInput.style.backgroundColor='#f0f0f0'; markupInput.style.color='#999'; markupInput.style.cursor='not-allowed'; setProBadge(fldMarkup); }
+      if(priceFixed){ priceFixed.disabled=true; priceFixed.style.backgroundColor='#f0f0f0'; priceFixed.style.color='#999'; priceFixed.style.cursor='not-allowed'; setProBadge(fldFixed); }
+      if(stratSel){ stratSel.disabled=true; stratSel.style.backgroundColor='#f0f0f0'; stratSel.style.cursor='not-allowed'; }
+    } else {
+      if(marginInput){ marginInput.disabled=false; marginInput.style.backgroundColor=''; marginInput.style.color=''; marginInput.style.cursor=''; }
+      if(markupInput){ markupInput.disabled=false; markupInput.style.backgroundColor=''; markupInput.style.color=''; markupInput.style.cursor=''; }
+      if(priceFixed){ priceFixed.disabled=false; priceFixed.style.backgroundColor=''; priceFixed.style.color=''; priceFixed.style.cursor=''; }
+      if(stratSel){ stratSel.disabled=false; stratSel.style.backgroundColor=''; stratSel.style.cursor=''; }
+    }
+    // Perfil: edição de equipamentos
+    const eqIds=['eq_type','eq_kw','eq_kwh','eq_gph','eq_gprice','eq_wph','eq_wprice','eq_mixer_kw','eq_mixer_kwh','eq_has_mixer'];
+    for(const id of eqIds){ const el=document.getElementById(id); if(el){ const dis=(plan==='free'); if(id==='eq_has_mixer'){ el.disabled=dis; } else { el.disabled=dis; el.style.backgroundColor=dis?'#f0f0f0':''; el.style.cursor=dis?'not-allowed':'auto'; } } }
+  }catch(e){}
+  }
+  const Router={current:'dashboard',stack:[],go(v,p={}){console.log('Router.go chamado para:', v);this.stack.push(this.current);this.current=v;this.render(v,p)},replace(v,p={}){console.log('Router.replace chamado para:', v);this.current=v;this.render(v,p)},back(){if(this.stack.length){const v=this.stack.pop();this.replace(v)}},render(v,p){
+    console.log('Router.render executando para:', v);
+    console.log('Views disponíveis:', Object.keys(Views));
+    console.log('Views['+v+'] existe?', typeof Views[v]);
+    document.getElementById('title').textContent=({dashboard:'Início',ingredients:'Ingredientes',packages:'Embalagens',recipes:'Receitas',calculator:'Calculadora',history:'Histórico',profile:'Perfil',welcome:'Boas‑vindas',pricing:'Plano PRO'})[v]||'PadariaPro';
+    document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
+    const tb=document.getElementById('tab-'+v);if(tb)tb.classList.add('active');
+    const backBtn=document.querySelector('header.appbar .btn.secondary[onclick="Router.back()"]');
+    if(backBtn){if(v==='dashboard'||v==='welcome'||this.stack.length===0){backBtn.style.visibility='hidden';}else{backBtn.style.visibility='visible';}}
+    if(Views[v]){console.log('Chamando Views.'+v+'()');Views[v](p)}else{console.error('View não encontrada:', v)}
+  }}
+  const Utils={id(){return Math.random().toString(36).slice(2,10)},money(n){return (n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})},num(v){const n=Number(v);return Number.isFinite(n)?n:0},arredondar(n, casas=2){const f=Math.pow(10,casas);return Math.round((Number(n)||0)*f)/f},ensureMonth(){const k=App.monthKey();if(App.state.limitsUsed.monthKey!==k){App.state.limitsUsed={ingredientsThisMonth:0,recipesThisMonth:0,calculationsThisMonth:0,monthKey:k};App.save();}},convert(q,fromU,toU){ if(!fromU||!toU||fromU===toU) return q; const map={KG:1000,G:1,L:1000,ML:1,UNIDADE:1}; const mass=['KG','G']; const vol=['L','ML']; if(mass.includes(fromU)&&mass.includes(toU)) return q*(map[fromU]/map[toU]); if(vol.includes(fromU)&&vol.includes(toU)) return q*(map[fromU]/map[toU]); return q; },paginateList(arr,page=1,per=10){const p=Math.max(1,Number(page)||1);const start=(p-1)*per;const end=start+per;return {items:arr.slice(start,end),page:p,per,total:arr.length,pages:Math.max(1,Math.ceil(arr.length/per))}}}
+  Utils.download=(filename,data)=>{ try{ const blob=new Blob([typeof data==='string'?data:JSON.stringify(data,null,2)],{type:'application/octet-stream'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); URL.revokeObjectURL(url); a.remove(); }catch(e){ console.warn('download failed',e); }}
+  Utils.sanitize=(str)=>{ if(typeof str!=='string')return''; return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;').replace(/\//g,'&#x2F;'); }
+  Utils.downloadPngFromSvg=(svgString, filename='logo.png', size=512)=>{ try{ const img=new Image(); const svg='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svgString); img.onload=()=>{ const c=document.createElement('canvas'); c.width=size; c.height=size; const ctx=c.getContext('2d'); ctx.fillStyle='#FFFFFF00'; ctx.fillRect(0,0,size,size); ctx.drawImage(img,0,0,size,size); c.toBlob(b=>{ const url=URL.createObjectURL(b); const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); URL.revokeObjectURL(url); },'image/png'); }; img.src=svg; }catch(e){ console.warn('download png failed',e); }}
+  const Icons={
+    ingredient:`<svg viewBox='0 0 24 24' width='20' height='20' xmlns='http://www.w3.org/2000/svg'><path fill='currentColor' d='M7 2a3 3 0 013 3c0 1-.5 1.9-1.3 2.5L15 14v6H7v-4H5v4H3v-6l7.3-7.5C10.5 8.9 11 8 11 7a4 4 0 10-8 0 1 1 0 002 0 2 2 0 114 0H5a2 2 0 012-2z'/></svg>`,
+    package:`<svg viewBox='0 0 24 24' width='20' height='20' xmlns='http://www.w3.org/2000/svg'><path fill='currentColor' d='M21 8.5l-9-4-9 4V19l9 4 9-4V8.5zM12 6.2L18.5 9 12 12 5.5 9 12 6.2zM6 11l6 2.8V20l-6-2.7V11zm8 9v-6.2L20 11v6.3L14 20z'/></svg>`,
+    oven:`<svg viewBox='0 0 24 24' width='18' height='18' xmlns='http://www.w3.org/2000/svg'><path fill='currentColor' d='M3 5h18v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5zm2 2v12h14V7H5zm2-4h10v2H7V3zm1 10h8v4H8v-4z'/></svg>`,
+    mixer:`<svg viewBox='0 0 24 24' width='18' height='18' xmlns='http://www.w3.org/2000/svg'><path fill='currentColor' d='M4 6a4 4 0 014-4h6a6 6 0 110 12H8a4 4 0 01-4-4V6zm4-2a2 2 0 000 4h8a4 4 0 000-8H8a2 2 0 00-2 2zm1 12h6v2H9v-2zm-3 3h12v2H6v-2z'/></svg>`,
+    labor:`<svg viewBox='0 0 24 24' width='18' height='18' xmlns='http://www.w3.org/2000/svg'><path fill='currentColor' d='M12 2a4 4 0 110 8 4 4 0 010-8zm-7 18a7 7 0 0114 0v2H5v-2z'/></svg>`,
+    fixed:`<svg viewBox='0 0 24 24' width='18' height='18' xmlns='http://www.w3.org/2000/svg'><path fill='currentColor' d='M3 5h18v4H3V5zm0 6h18v8H3v-8zM6 8h2V7H6v1zm0 6h2v-2H6v2z'/></svg>`,
+    money:`<svg viewBox='0 0 24 24' width='18' height='18' xmlns='http://www.w3.org/2000/svg'><path fill='currentColor' d='M2 6h20v12H2V6zm2 2v8h16V8H4zm2 2h2v4H6v-4zm10 0h2v4h-2v-4z'/></svg>`,
+    clock:`<svg viewBox='0 0 24 24' width='18' height='18' xmlns='http://www.w3.org/2000/svg'><path fill='currentColor' d='M12 2a10 10 0 100 20 10 10 0 000-20zm1 5h-2v6l5 3 1-1-4-2V7z'/></svg>`
+  }
+  const Store={
+    add(type,item){const plan=App.state.user.plan||'free';const lim=Limits[plan][type];const coll=App.state[type];if(plan==='free'&&Number.isFinite(lim)&&coll.length>=lim){UI.upgrade(type);return false}item.id=item.id||Utils.id();coll.push(item);App.save();return true},
+    update(type,id,data){const i=App.state[type].findIndex(x=>x.id===id);if(i>-1){App.state[type][i]=Object.assign({},App.state[type][i],data);App.save();}},
+    remove(type,id){const i=App.state[type].findIndex(x=>x.id===id);if(i>-1){App.state[type].splice(i,1);App.save();}}
+  }
+  const UI={
+    toast(msg,type='normal'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast';if(type==='error')t.classList.add('error');if(type==='success')t.classList.add('success');t.classList.add('show');clearTimeout(UI._tt);UI._tt=setTimeout(()=>{t.classList.remove('show')},2500)},
+    theme(){},
+    menu(){
+      const html = `
+        <div class='grid' style='gap:12px;'>
+          <div class='grid cols-2'>
+            <button class='btn' data-route='dashboard'>Início</button>
+            <button class='btn' data-route='calculator'>Calculadora</button>
+          </div>
+          <div class='grid cols-2'>
+            <button class='btn secondary' data-route='ingredients'>Ingredientes</button>
+            <button class='btn secondary' data-route='recipes'>Receitas</button>
+          </div>
+          <div class='grid cols-2'>
+            <button class='btn secondary' data-route='packages'>Embalagens</button>
+            <button class='btn secondary' data-route='profile'>Perfil</button>
+          </div>
+          <div class='grid cols-2'>
+            <button id='helpBtn' class='btn secondary'>Ajuda</button>
+            <button id='logoutBtn' class='btn secondary'>Sair</button>
+          </div>
+          <div class='grid cols-2'>
+            <button id='resetBtn' class='btn error'>Resetar</button>
+          </div>
+        </div>`;
+      UI.modal('Menu', html);
+      const sheet=document.querySelector('#modal .sheet');
+      sheet?.querySelectorAll('[data-route]').forEach(b=>{
+        b.addEventListener('click',()=>{ const r=b.getAttribute('data-route'); UI.closeModal(); if(r) Router.go(r); });
+      });
+      sheet?.querySelector('#helpBtn')?.addEventListener('click',()=>{ UI.closeModal(); Router.go('help'); });
+      sheet?.querySelector('#logoutBtn')?.addEventListener('click',()=>{ try{ UI.closeModal(); if(typeof logout==='function'){ logout(); } }catch(e){} });
+      sheet?.querySelector('#resetBtn')?.addEventListener('click',()=>{
+        UI.modal('Resetar Aplicativo', `<p>Isto limpará todos os dados locais desta instalação. Deseja continuar?</p><div class="row" style="gap:10px; justify-content:flex-end; margin-top:16px;"><button class="btn secondary" onclick="UI.closeModal()">Cancelar</button><button class="btn error" onclick="(function(){ App.reset(); UI.closeModal(); })()">Confirmar</button></div>`);
+      });
+    },
+    modal(title,html){let m=document.getElementById('modal');if(!m){m=document.createElement('div');m.id='modal';m.className='modal';m.innerHTML="<div class='backdrop' onclick='UI.closeModal()'></div><div class='sheet'><button class='close' onclick='UI.closeModal()'>✕</button><h3 id='modalTitle'></h3><div id='modalBody'></div></div>";document.body.appendChild(m);}m.querySelector('#modalTitle').textContent=title;m.querySelector('#modalBody').innerHTML=html;m.classList.add('show')},
+    closeModal(){document.getElementById('modal')?.classList.remove('show')},
+    upgrade(context='app'){ if((App.state.user.plan||'free')==='pro'){ return } const msg=`<div class='grid'>
+      <p>Recurso disponível apenas no plano <b>PRO</b>.</p>
+      <ul>
+        <li>Sem limites para ingredientes, receitas e embalagens</li>
+        <li>Ajuste de mão de obra e estratégias completas de preço</li>
+        <li>Configurações avançadas de equipamentos</li>
+      </ul>
+      <div class='row' style='justify-content:flex-end;gap:8px;'>
+        <button class='btn secondary' onclick='UI.closeModal()'>Fechar</button>
+        <button class='btn' onclick="(function(){ UI.closeModal(); Router.go('pricing'); })()">Conhecer Plano PRO →</button>
+      </div>
+    </div>`; UI.modal('Plano PRO', msg); },
+    initNumericSanitizer(){ if(UI._numBound) return; UI._numBound=true; document.addEventListener('input',function(e){ const t=e.target; if(!t) return; if(t.tagName==='INPUT' && t.type==='number'){ if(typeof t.value==='string'){ t.value=t.value.replace(',','.'); } } }); }
+    ,help(topic){ const map={
+      margin:'<b>Margem %</b><br>É a porcentagem do preço final que representa o lucro. Ex.: Se você vende por R$10 com 30% de margem, R$3 é lucro e R$7 é custo.',
+      markup:'<b>Markup %</b><br>É um multiplicador aplicado sobre o custo. Ex.: Custo R$10 + Markup 100% = Preço R$20. Markup de 100% dobra o valor.',
+      fixed:'<b>Custos Fixos</b><br>São despesas fixas médias por lote (aluguel, luz, água, etc.). Divida seus custos mensais pelo número de lotes produzidos.',
+      bake:'<b>Tempo de Forno</b><br>Tempo em minutos que o produto fica no forno. Usado para calcular o custo de energia do forno.',
+      quantity:'<b>Quantidade</b><br>Multiplica o rendimento da receita. Ex.: Receita rende 10 unidades, quantidade 2 = 20 unidades totais.',
+      labor:'<b>Mão de Obra</b><br>Custo estimado de trabalho. Calculado automaticamente baseado em tempo/unidade e valor/hora (configurável no Perfil).',
+      laborRate:'<b>Valor por Hora (R$/h)</b><br>Quanto você cobra (ou paga) por hora de trabalho. Valor médio Brasil: R$20-35/h.',
+      laborTime:'<b>Tempo por Unidade (h)</b><br>Quanto tempo leva para produzir 1 unidade. Ex: 0.08h = ~5 minutos por unidade.',
+      laborMin:'<b>Labor Mínimo (R$)</b><br>Valor mínimo cobrado de mão de obra, mesmo em lotes pequenos. Sugestão: R$5.',
+      laborMax:'<b>Labor Máximo (R$)</b><br>Valor máximo cobrado de mão de obra, mesmo em lotes grandes. Sugestão: R$60.',
+      stock:'<b>Controle de Estoque</b><br>Registre quanto você tem disponível. O sistema alertará quando não houver estoque suficiente.',
+      strategy:'<b>Estratégia de Preço</b><br>Escolha como calcular:<br>• Margem %: Define a % de lucro<br>• Markup %: Multiplica o custo<br>• Preço Fixo: Define valor final',
+      equipType:'<b>Tipo de Equipamento</b><br>Escolha o tipo principal de forno:<br>• Elétrico: Calcula custo por kWh<br>• Gás: Calcula custo por kg de gás<br>• Lenha: Calcula custo por kg de lenha',
+      equipPower:'<b>Potência</b><br>Potência do equipamento em Watts (W). Média: Forno 1800W, Batedeira 3000W.',
+      equipKwh:'<b>Preço kWh</b><br>Custo da energia elétrica por kWh. Média Brasil 2024: R$0,65-0,80.',
+      equipKg:'<b>Consumo (kg/h)</b><br><b>Gás:</b> Média 0,2-0,4 kg/h. Para descobrir: veja o peso do botijão antes e depois de algumas horas de uso, divida pela quantidade de horas.<br><br><b>Lenha:</b> Média 1,5-3 kg/h. Pese a lenha antes de usar e após algumas horas, calcule a média.',
+      equipPrice:'<b>Preço do Combustível</b><br><b>Gás:</b> Preço do botijão dividido pelo peso (ex: R$120 ÷ 13kg = R$9,23/kg).<br><br><b>Lenha:</b> Preço que você paga por kg de lenha seca (média R$2-4/kg).',
+      calculator:'Para usar a calculadora: 1) Cadastre ingredientes com preços. 2) Crie receitas com rendimento. 3) Escolha estratégia de preço e calcule!'
+    }; UI.modal('Ajuda', `<p>${map[topic]||'Tópico de ajuda não encontrado.'}</p><div class='row' style='justify-content:flex-end'><button class='btn' onclick='UI.closeModal()'>Fechar</button></div>`); }
+  }
+  const Views={
+    welcome(){const s=App.state.setup||{};const doneEq=s.equipmentDone;const doneIng=(App.state.ingredients.length>0)||s.ingredientsDone;const doneRec=(App.state.recipes.length>0)||s.recipeDone;const all=doneEq&&doneIng&&doneRec;const v=document.getElementById('view');v.innerHTML=`<div class='hero' style='background:linear-gradient(135deg, #6D4C41 0%, #8D6E63 100%); color:#fff;'><h2 style='color:#fff;'>👋 Bem-vindo ao PadariaPro!</h2><p style='color:rgba(255,255,255,0.95); font-size:16px;'>Calculadora profissional de preços para panificação. Vamos configurar seu ambiente em 3 passos simples.</p></div><div class='grid'><div class='card' style='background:linear-gradient(135deg, #FFF8E1 0%, #FFECB3 100%); border-left: 4px solid #D4A574; grid-column: 1 / -1;'><div style='display:flex; align-items:center; gap:12px; margin-bottom:12px;'><div style='font-size:32px;'>🍞</div><div><h3 style='margin:0; color:#6D4C41;'>Como funciona o PadariaPro?</h3><p style='margin:4px 0 0 0; color:#79716E; font-size:14px;'>Siga este processo para começar a calcular seus preços com precisão:</p></div></div><div style='background:rgba(255,255,255,0.6); border-radius:8px; padding:16px; font-size:14px; line-height:1.6; color:#2C2827;'><b>📌 Resumo do fluxo:</b><br>1️⃣ Configure seu equipamento (forno/gás) → 2️⃣ Cadastre ingredientes com preços → 3️⃣ Crie suas receitas → 4️⃣ Calcule preços com margem de lucro!</div></div><div class='card' style='${doneEq?"background:#E8F5E9; border-left:4px solid #4CAF50;":"border-left:4px solid #D4A574;"}'><div style='display:flex; align-items:start; gap:16px;'><div style='background:${doneEq?"#4CAF50":"#D4A574"}; color:#fff; font-weight:700; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:18px;'>${doneEq?'✓':'1'}</div><div style='flex:1;'><h4 style='margin:0 0 8px 0; color:#6D4C41;'>⚙️ Configure seu Equipamento</h4><p style='margin:0 0 12px 0; color:#79716E; font-size:14px; line-height:1.5;'>Defina o tipo de forno (Elétrico, Gás ou Lenha) e os custos de energia/combustível. Isso permite calcular o custo real de cada assada.</p><button class='btn ${doneEq?'secondary':''}' onclick="Router.go('profile')"><span>${doneEq?'✓ Configurado':'Configurar Agora'}</span></button></div></div></div><div class='card' style='${doneIng?"background:#E8F5E9; border-left:4px solid #4CAF50;":"border-left:4px solid #D4A574;"}'><div style='display:flex; align-items:start; gap:16px;'><div style='background:${doneIng?"#4CAF50":"#D4A574"}; color:#fff; font-weight:700; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:18px;'>${doneIng?'✓':'2'}</div><div style='flex:1;'><h4 style='margin:0 0 8px 0; color:#6D4C41;'>🥖 Cadastre seus Ingredientes</h4><p style='margin:0 0 12px 0; color:#79716E; font-size:14px; line-height:1.5;'>Adicione todos os ingredientes que você usa: farinha, açúcar, ovos, etc. Informe o preço pago e a quantidade comprada. O sistema calcula automaticamente o custo por unidade.</p><button class='btn ${doneIng?'secondary':''}' onclick="Router.go('ingredients')"><span>${doneIng?'✓ Cadastrados':'Cadastrar Ingredientes'}</span></button></div></div></div><div class='card' style='${doneRec?"background:#E8F5E9; border-left:4px solid #4CAF50;":"border-left:4px solid #D4A574;"}'><div style='display:flex; align-items:start; gap:16px;'><div style='background:${doneRec?"#4CAF50":"#D4A574"}; color:#fff; font-weight:700; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:18px;'>${doneRec?'✓':'3'}</div><div style='flex:1;'><h4 style='margin:0 0 8px 0; color:#6D4C41;'>📋 Crie sua Primeira Receita</h4><p style='margin:0 0 12px 0; color:#79716E; font-size:14px; line-height:1.5;'>Monte suas receitas adicionando ingredientes e quantidades. Defina o rendimento (quantas unidades produz) e configure tempo de forno. Pronto para calcular!</p><button class='btn ${doneRec?'secondary':''}' onclick="Router.go('recipes')"><span>${doneRec?'✓ Criadas':'Criar Receita'}</span></button></div></div></div>${all?`<div class='card' style='background:linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%); color:#fff; text-align:center; grid-column: 1 / -1;'><div style='font-size:48px; margin-bottom:8px;'>🎉</div><h3 style='color:#fff; margin:0 0 8px 0;'>Tudo Pronto!</h3><p style='margin:0 0 16px 0; font-size:15px; opacity:0.95;'>Você completou a configuração inicial. Agora pode começar a calcular os preços das suas receitas com precisão profissional!</p><button class='btn' style='background:#fff; color:#4CAF50; font-weight:700; font-size:16px; padding:14px 32px;' onclick="(function(){ App.state.seenWelcome=true; App.save(); Router.go('dashboard'); })()">🚀 Ir para o Dashboard</button></div>`:''}</div>`},
+    pricing(){ const v=document.getElementById('view'); if(!v) return; v.innerHTML = `
+      <div class='hero'>
+        <h2>💎 Planos</h2>
+        <p>Compare Free vs Pro</p>
+        <svg class='art' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'><defs><linearGradient id='g1' x1='0' x2='1' y1='0' y2='1'><stop offset='0' stop-color='var(--accent)'/><stop offset='1' stop-color='var(--accent-dark)'/></linearGradient></defs><path d='M0,80 C30,60 50,110 120,70 L120,120 L0,120 Z' fill='url(#g1)'/></svg>
+      </div>
+      <div class='grid'>
+        <div class='card'>
+          <h3 style='margin:0 0 8px 0'>🆓 Free</h3>
+          <ul style='margin:0;padding-left:18px'>
+            <li>Até 10 Ingredientes</li>
+            <li>Até 5 Embalagens</li>
+            <li>Até 3 Receitas</li>
+            <li>Sem edição avançada (equipamentos, mão de obra, estoque)</li>
+          </ul>
+        </div>
+        <div class='card'>
+          <h3 style='margin:0 0 8px 0'>💎 Pro</h3>
+          <ul style='margin:0;padding-left:18px'>
+            <li>Sem limites</li>
+            <li>Ajuste de Mão de Obra</li>
+            <li>Estratégias completas de preço</li>
+            <li>Edição de equipamentos e controle de estoque</li>
+          </ul>
+          <div class='row' style='justify-content:flex-end;margin-top:12px'>
+            <button class='btn' onclick="if(typeof openStripeCheckout==='function'){ openStripeCheckout(); }">Assinar PRO - <b style='font-size:16px;'>R$ 9,99/mês</b></button>
+          </div>
+        </div>
+        <div class='row' style='justify-content:flex-end'>
+          <button class='btn secondary' onclick='Router.back()'>Voltar</button>
+        </div>
+      </div>`; },
+    _defaultItemUnit(ingId){const ing=App.state.ingredients.find(x=>x.id===ingId);const u=ing?.unit||'UNIDADE';if(u==='KG'||u==='G')return 'G';if(u==='L'||u==='ML')return 'ML';return 'UNIDADE'},
+    dashCalcWidget(){return `<div style='margin-top:16px;'><b>Início</b><p class='hint' style='margin:8px 0;'>Bem-vindo ao PadariaPro! Use o menu abaixo para navegar.</p></div>`},
+    dashboard(){const v=document.getElementById('view');const ing=App.state.ingredients.length,pk=App.state.packages.length,rec=App.state.recipes.length,calc=App.state.limitsUsed.calculationsThisMonth;const s=App.state.setup||{};const doneEq=s.equipmentDone||(App.state.settings?.equipment?.type);const doneIng=ing>0||s.ingredientsDone;const doneRec=rec>0||s.recipeDone;const allDone=doneEq&&doneIng&&doneRec;const missing=[];if(!doneEq)missing.push({icon:'⚙️',label:'Equipamento',action:'profile'});if(!doneIng)missing.push({icon:'🥖',label:'Ingredientes',action:'ingredients'});if(!doneRec)missing.push({icon:'📋',label:'Receitas',action:'recipes'});const progressPct=Math.round(((doneEq?1:0)+(doneIng?1:0)+(doneRec?1:0))/3*100);const setupCard=!allDone?`<div class='card' style='background:linear-gradient(135deg, #FF6F00 0%, #FF8F00 100%); color:#fff; border:none; grid-column: 1 / -1; animation: pulse 2s ease-in-out infinite;'><div style='display:flex; align-items:center; gap:16px; margin-bottom:12px;'><div style='font-size:42px;'>⚠️</div><div style='flex:1;'><h3 style='margin:0; color:#fff; font-size:18px;'>Complete sua Configuração</h3><p style='margin:4px 0 0 0; font-size:14px; opacity:0.95;'>Para aproveitar 100% do PadariaPro, finalize o cadastro:</p></div><div style='background:rgba(255,255,255,0.2); border-radius:50%; width:64px; height:64px; display:flex; align-items:center; justify-content:center; flex-direction:column; border:3px solid #fff;'><div style='font-size:20px; font-weight:700;'>${progressPct}%</div><div style='font-size:10px; opacity:0.9;'>completo</div></div></div><div style='background:rgba(0,0,0,0.15); border-radius:8px; padding:12px; margin-bottom:12px;'><div style='display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:10px;'>${missing.map(m=>`<div style='background:rgba(255,255,255,0.25); border-radius:6px; padding:10px; display:flex; align-items:center; gap:10px;'><div style='font-size:24px;'>${m.icon}</div><div style='flex:1;'><div style='font-weight:600; font-size:14px;'>${m.label}</div><div style='font-size:12px; opacity:0.9;'>Pendente</div></div><button class='btn' style='background:#fff; color:#FF6F00; font-weight:600; padding:6px 12px; font-size:12px;' onclick=\"Router.go('${m.action}')\">Ir →</button></div>`).join('')}</div></div><div style='font-size:13px; opacity:0.95; text-align:center;'>💡 Com tudo configurado, você poderá calcular preços com precisão total!</div></div>`:'';const perCosts=App.state.recipes.map(r=>{const c=Views.recipeCost(r,1);const per=(r.yieldQty>0?c.subtotal/r.yieldQty:c.subtotal)||0;return {r,per}});const avgPer=perCosts.length?perCosts.reduce((a,b)=>a+b.per,0)/perCosts.length:0;const rankCost=perCosts.sort((a,b)=>a.per-b.per).slice(0,3);const rankCostHtml=rankCost.map((x,i)=>`<div class='row fadein' style='justify-content:space-between'><span>${i+1}. ${x.r.name||'-'}</span><b>${Utils.money(x.per)}</b></div>`).join('')||'<div class="hint">Cadastre receitas para ver o ranking</div>';const rankProfit=App.state.recipes.map(r=>{const c=Views.recipeCost(r,1).subtotal;const yieldQ=r.yieldQty||1;const perCost=c/Math.max(1,yieldQ);const price=perCost/(1-0.30);const profit=price-perCost;return {r,profit}}).sort((a,b)=>b.profit-a.profit).slice(0,3);const rankProfitHtml=rankProfit.map((x,i)=>`<div class='row fadein' style='justify-content:space-between'><span>${i+1}. ${x.r.name||'-'}</span><b>${Utils.money(x.profit)}</b></div>`).join('')||'<div class="hint">Cadastre receitas para ver o ranking</div>';const topProfit=rankProfit[0]?.r?.name||'-';const plan=App.state.user.plan||'free';const planCard=`<div style="background:linear-gradient(135deg,#6D4C41 0%,#8D6E63 100%);color:#fff;padding:15px;border-radius:12px;margin-bottom:16px;"><div class='row' style='justify-content:space-between;align-items:center'><div><div class='hint' style='color:#fff;opacity:.9'>Seu Plano</div><h3 style='margin:2px 0'>${plan==='free'?'🆓 Free':'💎 Pro'}</h3></div><div style='text-align:right;font-size:12px;'>${plan==='free'?`<div>Ingredientes: ${ing}/10</div><div>Receitas: ${rec}/3</div><div>Embalagens: ${pk}/5</div><button class='btn' style='margin-top:8px;background:#fff;color:#6D4C41' onclick="UI.upgrade('dashboard')">Upgrade →</button>`:`<div style='opacity:.9'>✓ Sem limites</div><div style='opacity:.9'>✓ Recursos PRO ativos</div>`}</div></div></div>`;v.innerHTML=`<div class='hero'><h2>📊 Dashboard</h2><p>Visão geral dos seus dados</p><svg class='art' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'><circle cx='30' cy='30' r='25' fill='rgba(255,255,255,.16)'/><circle cx='80' cy='80' r='35' fill='rgba(255,255,255,.12)'/></svg></div><div class='grid'>${setupCard}<div class='card'>${planCard}${Views.dashCalcWidget()}</div><div class='card'><b>Estatísticas Rápidas</b><div class='grid cols-2' style='margin-top:10px'><div class='stat-box'><div class='stat-num'>${ing}</div><div class='stat-lbl'>Ingredientes</div></div><div class='stat-box'><div class='stat-num'>${pk}</div><div class='stat-lbl'>Embalagens</div></div><div class='stat-box'><div class='stat-num'>${rec}</div><div class='stat-lbl'>Receitas</div></div><div class='stat-box'><div class='stat-num'>${Utils.money(avgPer)}</div><div class='stat-lbl'>Custo/Un Médio</div></div></div></div><div class='card'><b>Receitas Mais Baratas</b><div class='grid' style='margin-top:6px'>${rankCostHtml}</div></div><div class='card'><b>Receitas Mais Lucrativas</b><div class='hint'>Margem 30% estimada</div><div class='grid' style='margin-top:6px'>${rankProfitHtml}</div></div></div>`; setTimeout(()=>{ if(typeof Chart!=='undefined'){ Views.renderCostChart(); Views.renderDistributionChart(); } },100);},
+    renderCostChart(){try{
+      // Garante contêiner e canvas
+      let wrap=document.getElementById('cost-chart');
+      if(!wrap){
+        const v=document.getElementById('view');
+        const card=document.createElement('div');
+        card.className='card';
+        card.innerHTML="<b>Análises: Custo por Receita</b><div id='cost-chart' style='margin-top:10px'><canvas id='cost-chart-canvas' height='160'></canvas></div>";
+        v?.appendChild(card);
+        wrap=card.querySelector('#cost-chart');
+      } else if(!document.getElementById('cost-chart-canvas')){
+        wrap.innerHTML="<canvas id='cost-chart-canvas' height='160'></canvas>";
+      }
+      if(typeof Chart==='undefined'){return}
+      const labels=[]; const costs=[];
+      if(App.state.recipes.length===0){ if(wrap) wrap.innerHTML = "<div class='hint'>📊 Cadastre receitas para ver análises</div>"; return; }
+      for(const r of App.state.recipes){ const c=Views.recipeCost(r,1); labels.push(r.name||'-'); const total=c?.subtotal??0; costs.push(Number((total).toFixed(2))); }
+      const ctx=document.getElementById('cost-chart-canvas')?.getContext('2d'); if(!ctx) return;
+      new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Custo de Produção (R$)',data:costs,backgroundColor:'#FFD700',borderColor:'#6D4C41',borderWidth:2,borderRadius:8}]},options:{responsive:true,maintainAspectRatio:true,animation:{duration:600},scales:{y:{beginAtZero:true,ticks:{callback:v=>'R$ '+v}}}}});
+    }catch(e){}},
+    renderDistributionChart(){try{
+      // Garante contêiner e canvas
+      let wrap=document.getElementById('dist-chart');
+      if(!wrap){
+        const v=document.getElementById('view');
+        const card=document.createElement('div');
+        card.className='card';
+        card.innerHTML="<b>Distribuição de Custos</b><div id='dist-chart' style='margin-top:10px'><canvas id='dist-chart-canvas' height='180'></canvas></div>";
+        v?.appendChild(card);
+        wrap=card.querySelector('#dist-chart');
+      } else if(!document.getElementById('dist-chart-canvas')){
+        wrap.innerHTML="<canvas id='dist-chart-canvas' height='180'></canvas>";
+      }
+      if(typeof Chart==='undefined'){return}
+      if(App.state.recipes.length===0){ if(wrap) wrap.innerHTML = "<div class='hint'>📊 Cadastre receitas para ver análises</div>"; return; }
+      const r=App.state.recipes[0]; const base=Views.recipeCost(r,1);
+      const eq=App.state.settings?.equipment||{type:'electric',electric:{kwhPrice:0.95,ovenKw:3}}; const ovenMin=25; let ovenCost=0; const hours=ovenMin/60;
+      if(eq.type==='electric'){ const kwh=(eq.electric?.ovenKw/1000||3)*hours; ovenCost=kwh*(eq.electric?.kwhPrice||0.95);} else if(eq.type==='gas'){ const kg=(eq.gas?.kgPerHour||0.3)*hours; ovenCost=kg*(eq.gas?.kgPrice||8.0);} else { const kg=(eq.wood?.kgPerHour||2.0)*hours; ovenCost=kg*(eq.wood?.kgPrice||2.5);} 
+      const totalUnits=Math.max(1, Number(r.yieldQty||1)); const rate=App.state.settings?.labor?.hourlyRate ?? 25; const tpu=App.state.settings?.labor?.baseTimePerUnit ?? 0.08; let labor=rate*tpu*totalUnits; if(totalUnits>20 && totalUnits<=50) labor*=0.85; if(totalUnits>50) labor*=0.7; labor=Math.max(5,Math.min(60,labor)); const fixed=0;
+      const labels=['Ingredientes','Embalagem','Forno','Mão de Obra','Fixos']; const data=[base.ingredientes,base.embalagem,ovenCost,labor,fixed].map(x=>Number(x.toFixed(2)));
+      const ctx=document.getElementById('dist-chart-canvas')?.getContext('2d'); if(!ctx) return;
+      new Chart(ctx,{type:'doughnut',data:{labels,datasets:[{data,backgroundColor:['#FFC107','#8D6E63','#90CAF9','#FF8A65','#B0BEC5'],borderWidth:0} ]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{position:'bottom'}},animation:{duration:700}}});
+    }catch(e){}},
+    // ===== Visualização de Receita e PDF =====
+    formatMethod(txt){const lines=String(txt||'').split(/\r?\n/).map(s=>s.trim()).filter(Boolean); if(lines.length===0) return '<div class="hint">Sem modo de preparo.</div>'; const items=lines.map(s=>{ if(/^\d+\)/.test(s)||/^\d+\./.test(s)) return `<li><b>${s.replace(/^\d+[\)\.]/,'').trim()}</b></li>`; if(/^[-•]/.test(s)) return `<li>${s.replace(/^[-•]/,'').trim()}</li>`; return `<li>${s}</li>`; }).join(''); return `<ol style='margin-left:18px;'>${items}</ol>`},
+    recipes_view(id){const r=App.state.recipes.find(x=>x.id===id); if(!r){UI.toast('Receita não encontrada','error'); Router.go('recipes'); return} const ingHtml=(r.items||[]).map(it=>{const ing=App.state.ingredients.find(x=>x.id===it.id)||{}; return `<div class='row' style='justify-content:space-between'><span>${ing.name||'-'}</span><span>${it.qty||0} ${it.unit||''}</span></div>`}).join('')||'<div class="hint">Sem ingredientes.</div>'; const times=`Forno: ${Number(r.bakeTime||0)} min • Batedeira: ${Number(r.mixTime||0)} min`; document.getElementById('view').innerHTML=`<div class='hero'><h2>📄 ${r.name||'Receita'}</h2><p>Rendimento: ${r.yieldQty||1} ${r.yieldUnit||'UNIDADE'}</p></div><div id='recipeView' class='grid'><div class='card'><b>Ingredientes</b><div class='grid'>${ingHtml}</div></div><div class='card'><b>Tempos</b><div>${times}</div></div><div class='card'><b>Modo de Preparo</b><div>${Views.formatMethod(r.method||'')}</div></div><div class='card'><b>Notas</b><div>${(r.notes||'').replace(/\n/g,'<br/>')||'<span class="hint">Sem notas.</span>'}</div></div><div class='row' style='justify-content:flex-end;gap:10px;'><button class='btn secondary' onclick="Views.recipe_export_pdf('${r.id}')">Exportar PDF</button><button class='btn' onclick="Router.go('recipes')">Voltar</button></div></div>`},
+    async recipe_export_pdf(id){const r=App.state.recipes.find(x=>x.id===id); if(!r) return; const ensureLib=()=>new Promise((res,rej)=>{ if(window.html2pdf){res()} else { const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js'; s.onload=()=>res(); s.onerror=()=>rej(new Error('Falha ao carregar html2pdf.js')); document.body.appendChild(s);} }); try{ await ensureLib(); const el=document.getElementById('recipeView'); const opt={margin:10,filename:`${(r.name||'receita').toLowerCase().replace(/\s+/g,'-')}.pdf`,image:{type:'jpeg',quality:0.98},html2canvas:{scale:2},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}; // @ts-ignore
+      html2pdf().from(el).set(opt).save(); }catch(e){ UI.toast('Não foi possível gerar o PDF','error'); }
+    },
+    calcTable(n){
+      const all=[...App.state.calculations].slice().reverse();
+      const head=all.slice(0,Math.max(0,n));
+      if(head.length===0) return `<div class='empty'>Sem cálculos</div>`;
+      const rowHtml=(c)=>{
+        const d=new Date(c.date);
+        const date=d.toLocaleDateString();
+        const time=d.toLocaleTimeString();
+        const qty=Number(c.mult||1);
+        return `
+          <div class='list-item' style='display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid rgba(0,0,0,.06)'>
+            <div style='display:flex;flex-direction:column;gap:4px;'>
+              <div style='font-weight:600;'>${c.recipeName||'-'} <span class='chip'>x${qty}</span></div>
+              <div class='sub' style='color:var(--muted)'>${date} • ${time}</div>
+            </div>
+            <div style='font-weight:800;'>${Utils.money(c.price)}</div>
+          </div>`;
+      };
+      const headRows=head.map(rowHtml).join('');
+      // Bloco de expansão até 10
+      const extra=all.slice(n, Math.min(all.length, 10));
+      const extraRows=extra.map(rowHtml).join('');
+      const expand = extra.length>0 ? `
+        <details style='margin-top:6px;'>
+          <summary class='hint' style='cursor:pointer;'>Mostrar mais</summary>
+          <div style='margin-top:8px;'>${extraRows||''}</div>
+          <div class='row' style='justify-content:flex-end;margin-top:6px;'>
+            <button class='btn secondary' onclick="Router.go('history')">Ver histórico completo →</button>
+          </div>
+        </details>` : '';
+      return `<div class='grid'>${headRows}${expand}</div>`;
+    },
+    planLabel(){return ({free:'🎁 FREE',pro:'⭐ PRO'})[App.state.user.plan]}, planBtn(){return App.state.user.plan==='free'?"<button class='btn' style='background:var(--accent);color:var(--primary);font-weight:700;' onclick=\"UI.upgrade('recipes')\">⭐ Fazer Upgrade</button>":"<button class='btn secondary' onclick=\"alert('Gerenciar Assinatura')\">Gerenciar Plano PRO</button>"},
+    ingredients_filter(){const q=(document.getElementById('ingQ')?.value||'').toLowerCase();const listEl=document.getElementById('ingRows');if(!listEl)return;const all=App.state.ingredients.filter(i=>!q||i.name.toLowerCase().includes(q));const isFree=(App.state.user.plan||'free')==='free';const per=10; Views._ingPage=Math.max(1, Views._ingPage||1); const pager=Utils.paginateList(all,Views._ingPage,per); if(pager.total===0){listEl.innerHTML=`<div style='padding:24px;text-align:center;color:var(--muted);'>${q?`Nenhum ingrediente encontrado para "${q}"`:'Nenhum ingrediente cadastrado.'}</div>`; const pagEl=document.getElementById('ingPag'); if(pagEl) pagEl.innerHTML=''; return} listEl.innerHTML=pager.items.map(i=>{const up=i.qtyBought>0?i.price/i.qtyBought:0;const sub=isFree?`${Utils.money(i.price)} • ${i.qtyBought} ${i.unit}`:`${Utils.money(i.price)} • ${i.qtyBought} ${i.unit} • Estoque: ${i.stock||0}`;return `<div class='list-item'><div class='row' style='gap:12px;align-items:center;flex:1;'><div class='icon' style='color:var(--primary)'>${Icons.ingredient}</div><div class='info'><div class='title'>${i.name}</div><div class='sub'>${sub}</div><div class='sub' style='color:var(--accent-dark);font-weight:600;'>Custo/Un: ${Utils.money(up)}</div></div></div><div class='row' style='gap:8px;'><button class='btn secondary' onclick="Views.ingredients_form('${i.id}')">Editar</button><button class='btn error' onclick="Views.ingredients_delete('${i.id}')">Excluir</button></div></div>`}).join(''); const pagEl=document.getElementById('ingPag'); if(pagEl && pager.pages>1){ pagEl.innerHTML=`<button class='btn secondary' ${pager.page<=1?'disabled':''} onclick="(function(){ Views._ingPage=${pager.page-1}; Views.ingredients_filter(); })()">Anterior</button><span class='chip'>Página ${pager.page}/${pager.pages}</span><button class='btn secondary' ${pager.page>=pager.pages?'disabled':''} onclick="(function(){ Views._ingPage=${pager.page+1}; Views.ingredients_filter(); })()">Próxima</button>`;} else if(pagEl){ pagEl.innerHTML=''; }},
+    ingredients(params){const page=Number(params?.page)||1; const v=document.getElementById('view');v.innerHTML=`<div class='hero'><h2>🥖 Ingredientes</h2><p>Cadastre o que você usa</p><svg class='art' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'><path d='M10 110 C 40 90, 80 130, 120 80 L120 120 L10 120 Z' fill='rgba(255,255,255,.18)'/></svg></div><div class='row' style='justify-content:space-between;margin-bottom:16px;'><input id='ingQ' class='input' placeholder='Buscar...' oninput='Views.ingredients_filter()' style='flex:1;'/><div class='row'><button class='btn' onclick="(function(){ if(!PlanManager.ensureCanAdd('ingredients','Você atingiu o limite de 10 ingredientes no plano Free')) return; Views.ingredients_form(); })()">Adicionar</button></div></div><div class='card'><div id='ingRows' class='list'></div><div id='ingPag' class='row' style='justify-content:center;gap:8px;margin-top:10px;'></div></div>`;Views.ingredients_filter(); const per=10; const pager=Utils.paginateList(App.state.ingredients,page,per); const pagEl=document.getElementById('ingPag'); if(pagEl && pager.pages>1){ pagEl.innerHTML=`<button class='btn secondary' ${pager.page<=1?'disabled':''} onclick="Views.ingredients({page:${pager.page-1}})">Anterior</button><span class='chip'>Página ${pager.page}/${pager.pages}</span><button class='btn secondary' ${pager.page>=pager.pages?'disabled':''} onclick="Views.ingredients({page:${pager.page+1}})">Próxima</button>`;}},
+    ingredients_form(id){const it=App.state.ingredients.find(x=>x.id===id)||{name:'',price:0,qtyBought:0,unit:'KG',stock:0};const isPro=(App.state.user.plan||'free')==='pro';const stockEnabled=isPro&&(App.state.settings?.useStockControl??false);const stockDisabled=!stockEnabled;document.getElementById('view').innerHTML=`<div class='card'><div class='grid'><div><label>Nome</label><input id='f_name' class='input' value='${it.name}'/></div><div class='grid cols-2'><div><label>Preço</label><input id='f_price' type='number' step='0.01' class='input' value='${it.price}'/></div><div><label>Qtd</label><input id='f_qty' type='number' step='0.001' class='input' value='${it.qtyBought}'/></div></div><div class='grid cols-2'><div><label>Unidade</label><select id='f_unit' class='input'>${['KG','G','L','ML','UNIDADE'].map(u=>`<option ${u===it.unit?'selected':''}>${u}</option>`).join('')}</select></div><div><label>Estoque ${!isPro?"<span class='chip'>💎 PRO</span>":''}</label><input id='f_stock' type='number' step='0.001' class='input' value='${it.stock||0}' ${stockDisabled?'disabled':''}/>${!isPro?"<span class='hint'>Controle de estoque disponível no plano PRO.</span>":!stockEnabled?"<span class='hint'>Ative o controle de estoque nas configurações do perfil.</span>":''}</div></div><div class='row'><button class='btn' onclick=\"Views.ingredients_save('${it.id||''}')\">Salvar</button></div></div></div>`},
+    ingredients_save(id){const name=document.getElementById('f_name').value.trim();const price=Utils.num(document.getElementById('f_price').value);const qty=Utils.num(document.getElementById('f_qty').value);const unit=document.getElementById('f_unit').value;const stockEl=document.getElementById('f_stock');const stock=Utils.num(stockEl?.value ?? 0);if(!name){UI.toast('Nome obrigatório','error');return}if(price<0||qty<0||stock<0){UI.toast('Valores inválidos','error');return}const data={name,price,qtyBought:qty,unit,stock};const wasEmpty=(App.state.ingredients.length===0);if(id)Store.update('ingredients',id,data);else if(!Store.add('ingredients',data))return; if(wasEmpty){App.state.setup=App.state.setup||{};App.state.setup.ingredientsDone=true;App.save();} UI.toast('Salvo com sucesso','success');Router.go('ingredients')},
+    ingredients_delete(id){const isUsed=App.state.recipes.some(r=>r.items.some(it=>it.id===id));if(isUsed){UI.modal('Ação Bloqueada',`<p>Este ingrediente não pode ser excluído pois está sendo usado em uma ou mais receitas.</p><div class='row' style='gap:10px;justify-content:flex-end;margin-top:16px;'><button class='btn secondary' onclick='UI.closeModal()'>Entendido</button></div>`);return}UI.modal('Excluir Ingrediente',`<p>Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.</p><div class='row' style='gap:10px;justify-content:flex-end;margin-top:16px;'><button class='btn secondary' onclick='UI.closeModal()'>Cancelar</button><button class='btn error' onclick='(function(){ Store.remove("ingredients","${id}"); Views.ingredients_filter(); UI.closeModal(); })()'>Excluir</button></div>`);},
+    packages(){const v=document.getElementById('view');v.innerHTML=`<div class='hero'><h2>📦 Embalagens</h2><p>Gerencie suas embalagens</p></div><div class='row' style='justify-content:space-between'><div></div><div class='row'><button class='btn' onclick="(function(){ if(!PlanManager.ensureCanAdd('packages','Limite de 5 embalagens no plano Free')) return; Views.packages_form(); })()">Adicionar</button></div></div><div class='card'><div id='pRows' class='list'></div></div>`;document.getElementById('pRows').innerHTML=App.state.packages.map(i=>`<div class='list-item'><div class='row' style='gap:10px'><div class='icon' style='color:var(--primary)'>${Icons.package}</div><div class='info'><div class='title'>${i.name}</div><div class='sub'>${Utils.money(i.price)} • ${i.qty||1} un • ${Utils.money(i.price/(i.qty||1))}/un • Estoque: ${i.stock||0}</div></div></div><div class='row'><button class='btn secondary' onclick="Views.packages_form('${i.id}')">Editar</button><button class='btn error' onclick="Views.packages_delete('${i.id}')">Excluir</button></div></div>`).join('')},
+    packages_form(id){const it=App.state.packages.find(x=>x.id===id)||{name:'',price:0,qty:1,stock:0};const isPro=(App.state.user.plan||'free')==='pro';const stockEnabled=isPro&&(App.state.settings?.useStockControl??false);const stockDisabled=!stockEnabled;document.getElementById('view').innerHTML=`<div class='card'><div class='grid'><div><label>Nome da Embalagem</label><input id='p_name' class='input' value='${it.name}' placeholder='Ex: Caixa de papelão'/></div><div class='grid cols-3'><div><label>Preço Total (R$)</label><input id='p_price' type='number' step='0.01' class='input' value='${it.price}' placeholder='100'/></div><div><label>Quantidade (un)</label><input id='p_qty' type='number' step='1' min='1' class='input' value='${it.qty||1}' placeholder='50'/></div><div><label>Estoque ${!isPro?"<span class='chip'>💎 PRO</span>":''}</label><input id='p_stock' type='number' step='1' class='input' value='${it.stock||0}' ${stockDisabled?'disabled':''}/>${!isPro?"<span class='hint'>Controle de estoque disponível no plano PRO.</span>":!stockEnabled?"<span class='hint'>Ative o controle de estoque nas configurações do perfil.</span>":''}</div></div><span class='hint'>Exemplo: Caixa de R$100 com 50 unidades = R$2,00 por unidade</span><div class='row'><button class='btn' onclick="Views.packages_save('${it.id||''}')">Salvar</button></div></div></div>`},
+    packages_save(id){const name=document.getElementById('p_name').value.trim();const price=Utils.num(document.getElementById('p_price').value);const qty=Math.max(1,Utils.num(document.getElementById('p_qty').value));const stock=Utils.num(document.getElementById('p_stock').value);if(!name){UI.toast('Nome obrigatório','error');return}if(price<0||stock<0||qty<1){UI.toast('Valores inválidos','error');return}const data={name,price,qty,stock};if(id)Store.update('packages',id,data);else if(!Store.add('packages',data))return;UI.toast('Salvo com sucesso','success');Router.go('packages')},
+    packages_delete(id){const isUsed=App.state.recipes.some(r=>r.packageId===id);if(isUsed){UI.modal('Ação Bloqueada',`<p>Esta embalagem não pode ser excluída pois está vinculada a uma ou mais receitas.</p><div class='row' style='gap:10px;justify-content:flex-end;margin-top:16px;'><button class='btn secondary' onclick='UI.closeModal()'>Entendido</button></div>`);return}UI.modal('Excluir Embalagem',`<p>Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.</p><div class='row' style='gap:10px;justify-content:flex-end;margin-top:16px;'><button class='btn secondary' onclick='UI.closeModal()'>Cancelar</button><button class='btn error' onclick='(function(){ Store.remove("packages","${id}"); Router.go("packages"); UI.closeModal(); })()'>Excluir</button></div>`);},
+    recipes(params){const page=Number(params?.page)||1; const v=document.getElementById('view');v.innerHTML=`<div class='hero'><h2>📋 Receitas</h2><p>Crie e gerencie suas receitas</p><svg class='art' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'><rect x='70' y='-10' width='80' height='80' rx='18' fill='rgba(255,255,255,.16)'/></svg></div><div class='row' style='justify-content:space-between'><div></div><div class='row'><button class='btn' onclick="(function(){ if(!PlanManager.ensureCanAdd('recipes','Limite de 3 receitas no plano Free')) return; Views.recipes_form(); })()">Nova Receita</button></div></div><div id='recipesList' class='grid'></div><div id='recPag' class='row' style='justify-content:center;gap:8px;margin-top:10px;'></div>`; const per=10; const pager=Utils.paginateList(App.state.recipes,page,per); document.getElementById('recipesList').innerHTML=pager.items.map(r=>`<div class='card'><div class='row' style='justify-content:space-between'><b>${r.name}</b><div class='row'><button class='btn secondary' onclick=\"Views.recipes_view('${r.id}')\">Ver</button><button class='btn secondary' onclick=\"Views.recipes_form('${r.id}')\">Editar</button><button class='btn error' onclick=\"Views.recipes_delete('${r.id}')\">Excluir</button></div></div><div class='row'><span class='chip'>Rendimento: ${r.yieldQty} ${r.yieldUnit}</span>${r.packageId?`<span class='chip'>Embalagem: ${(App.state.packages.find(p=>p.id===r.packageId)||{}).name||'-'}</span>`:''}</div></div>`).join(''); const pagEl=document.getElementById('recPag'); if(pagEl && pager.pages>1){ pagEl.innerHTML=`<button class='btn secondary' ${pager.page<=1?'disabled':''} onclick=\"Views.recipes({page:${pager.page-1}})\">Anterior</button><span class='chip'>Página ${pager.page}/${pager.pages}</span><button class='btn secondary' ${pager.page>=pager.pages?'disabled':''} onclick=\"Views.recipes({page:${pager.page+1}})\">Próxima</button>`;}},
+    plans(){ const v=document.getElementById('view'); v.innerHTML=`<div class='hero'><h2>💎 Planos</h2><p>Compare Free vs Pro</p></div><div class='grid cols-2'><div class='card'><h3>🆓 Free</h3><ul><li>Até 10 Ingredientes</li><li>Até 5 Embalagens</li><li>Até 3 Receitas</li><li>Sem edição avançada (equipamentos, labor, controle de estoque)</li></ul></div><div class='card'><h3>💎 Pro</h3><ul><li>Sem limites</li><li>Ajuste de Mão de Obra</li><li>Estratégias completas de preço</li><li>Edição de equipamentos</li><li>Controle de estoque</li></ul><div class='row' style='justify-content:flex-end'><button class='btn' onclick="UI.upgrade('plans')">Assinar PRO</button></div></div></div>`; },
+    help(){ const v=document.getElementById('view'); const plan=(App.state.user.plan||'free'); v.innerHTML=`
+      <div class='hero'>
+        <h2>📖 Central de Ajuda</h2>
+        <p>Tire suas dúvidas sobre o PadariaPro</p>
+      </div>
+      <div class='grid'>
+        <div class='card' style='background:linear-gradient(135deg, #6D4C41 0%, #8D6E63 100%); color:#fff; grid-column: 1 / -1;'>
+          <h3 style='margin-top:0; color:#fff;'>📚 Como Usar o App - Passo a Passo</h3>
+          <p style='font-size:15px; line-height:1.6; margin-bottom:20px;'>
+            Siga este fluxo para usar o PadariaPro corretamente:
+          </p>
+          <div style='background:rgba(255,255,255,0.15); border-radius:12px; padding:20px; margin-bottom:12px;'>
+            <div style='display:flex; align-items:start; gap:16px; margin-bottom:16px;'>
+              <div style='background:#fff; color:#6D4C41; font-weight:700; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;'>1</div>
+              <div>
+                <h4 style='margin:0 0 8px 0; color:#fff;'>🥖 Cadastre seus Ingredientes</h4>
+                <p style='margin:0; font-size:14px; line-height:1.5;'>
+                  Vá em <b>Ingredientes</b> → <b>Adicionar</b>. Preencha o nome, preço pago, quantidade comprada e unidade (KG, L, etc). 
+                  O sistema calcula automaticamente o custo por unidade. Exemplo: Farinha R$50,00 por 50kg = R$1,00/kg.
+                </p>
+              </div>
+            </div>
+            <div style='display:flex; align-items:start; gap:16px; margin-bottom:16px;'>
+              <div style='background:#fff; color:#6D4C41; font-weight:700; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;'>2</div>
+              <div>
+                <h4 style='margin:0 0 8px 0; color:#fff;'>📦 Cadastre suas Embalagens (se houver)</h4>
+                <p style='margin:0; font-size:14px; line-height:1.5;'>
+                  Vá em <b>Embalagens</b> → <b>Adicionar</b>. Cadastre o preço total e quantidade de unidades. 
+                  Exemplo: Caixa de papelão R$100 com 50 unidades = R$2,00 por embalagem.
+                </p>
+              </div>
+            </div>
+            <div style='display:flex; align-items:start; gap:16px; margin-bottom:16px;'>
+              <div style='background:#fff; color:#6D4C41; font-weight:700; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;'>3</div>
+              <div>
+                <h4 style='margin:0 0 8px 0; color:#fff;'>📋 Crie suas Receitas</h4>
+                <p style='margin:0; font-size:14px; line-height:1.5;'>
+                  Vá em <b>Receitas</b> → <b>Nova Receita</b>. Preencha o nome, rendimento (ex: 10 pães), 
+                  adicione os ingredientes com as quantidades usadas, selecione a embalagem (opcional), 
+                  configure tempo de forno e modo de preparo. Salve a receita!
+                </p>
+              </div>
+            </div>
+            <div style='display:flex; align-items:start; gap:16px; margin-bottom:16px;'>
+              <div style='background:#fff; color:#6D4C41; font-weight:700; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;'>4</div>
+              <div>
+                <h4 style='margin:0 0 8px 0; color:#fff;'>⚙️ Configure seus Equipamentos (Opcional)</h4>
+                <p style='margin:0; font-size:14px; line-height:1.5;'>
+                  Vá em <b>Perfil</b> → <b>Equipamento</b>. Escolha o tipo de forno (Elétrico, Gás ou Lenha), 
+                  configure potência/consumo e preço de energia/combustível. Isso afeta o custo de uso do equipamento.
+                </p>
+              </div>
+            </div>
+            <div style='display:flex; align-items:start; gap:16px;'>
+              <div style='background:#fff; color:#6D4C41; font-weight:700; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;'>5</div>
+              <div>
+                <h4 style='margin:0 0 8px 0; color:#fff;'>💰 Calcule o Preço da sua Receita</h4>
+                <p style='margin:0; font-size:14px; line-height:1.5;'>
+                  Vá em <b>Dashboard</b> ou <b>Calculadora</b>. Selecione uma receita, defina a quantidade desejada (multiplica o rendimento), 
+                  escolha a estratégia de preço (Margem %, Markup % ou Preço Fixo), ajuste os valores e clique em <b>Calcular</b>. 
+                  O sistema mostra o custo total, lucro e preço final sugerido!
+                </p>
+              </div>
+            </div>
+          </div>
+          <p style='font-size:13px; opacity:0.9; margin:0;'>
+            💡 <b>Dica:</b> Para obter cálculos precisos, mantenha seus ingredientes e embalagens sempre atualizados com os preços reais de compra.
+          </p>
+        </div>
+
+        <div class='card'>
+          <h3 style='margin-top:0'>🧮 Calculadora</h3>
+          <details><summary><b>Como usar a calculadora?</b></summary>
+            <p>1. Selecione uma receita cadastrada<br>
+            2. Defina a quantidade (multiplica o rendimento)<br>
+            3. Escolha a estratégia de preço (Margem, Markup ou Fixo)<br>
+            4. Ajuste os valores e clique em "Calcular"</p>
+          </details>
+          <details><summary><b>Diferença entre Margem e Markup?</b></summary>
+            <p><b>Margem %:</b> É o percentual de lucro sobre o preço final. Ex: R$10 com 30% margem = R$3 lucro + R$7 custo.<br><br>
+            <b>Markup %:</b> É um multiplicador sobre o custo. Ex: Custo R$10 + Markup 100% = Preço R$20.</p>
+          </details>
+          <details><summary><b>O que são Custos Fixos?</b></summary>
+            <p>São despesas fixas médias por lote, como aluguel, luz, água. Divida seus custos mensais pelo número de lotes produzidos no mês.</p>
+          </details>
+        </div>
+
+        <div class='card'>
+          <h3 style='margin-top:0'>🥖 Ingredientes</h3>
+          <details><summary><b>Como cadastrar ingredientes?</b></summary>
+            <p>Vá em Ingredientes → Adicionar → Preencha nome, preço pago, quantidade comprada e unidade. O sistema calcula automaticamente o custo por unidade.</p>
+          </details>
+          <details><summary><b>Como funciona o controle de estoque? 💎</b></summary>
+            <p>Recurso PRO: Cadastre o estoque atual de cada ingrediente. Ao calcular preços, o sistema alerta se não houver estoque suficiente.</p>
+          </details>
+        </div>
+
+        <div class='card'>
+          <h3 style='margin-top:0'>📋 Receitas</h3>
+          <details><summary><b>Como criar uma receita?</b></summary>
+            <p>1. Vá em Receitas → Nova Receita<br>
+            2. Preencha o nome e rendimento (ex: 10 pães)<br>
+            3. Adicione os ingredientes e quantidades<br>
+            4. Configure tempo de forno/batedeira e modo de preparo<br>
+            5. Salve!</p>
+          </details>
+          <details><summary><b>Posso exportar receitas em PDF?</b></summary>
+            <p>Sim! Ao visualizar uma receita, clique em "Exportar PDF" para gerar um documento formatado com todos os detalhes.</p>
+          </details>
+        </div>
+
+        <div class='card'>
+          <h3 style='margin-top:0'>⚙️ Configurações</h3>
+          <details><summary><b>Como configurar equipamentos?</b></summary>
+            <p>Vá em Perfil → Equipamentos. Configure:<br>
+            • Tipo de forno (Elétrico, Gás ou Lenha)<br>
+            • Potência/consumo<br>
+            • Preço de energia ou combustível<br>
+            Isso afeta o cálculo de custo por uso.</p>
+          </details>
+          <details><summary><b>Como ajustar mão de obra? 💎</b></summary>
+            <p>Recurso PRO: No Perfil, configure valor/hora e tempo base por unidade. O sistema calcula automaticamente com economia de escala para lotes maiores.</p>
+          </details>
+        </div>
+
+        ${plan==='pro'?`<div class='card'>
+          <h3 style='margin-top:0'>💎 Gerenciar Assinatura PRO</h3>
+          <p>Você está no plano <b>PRO</b>! Gerencie sua assinatura:</p>
+          <div class='row' style='gap:8px; flex-wrap:wrap'>
+            <button class='btn secondary' onclick='Views.manageSubscription()'>Portal de Assinatura</button>
+            <button class='btn error' onclick='Views.cancelSubscription()'>Cancelar Assinatura</button>
+          </div>
+          <p class='hint' style='margin-top:12px'>O portal permite alterar forma de pagamento, visualizar faturas e fazer o cancelamento.</p>
+        </div>`:''}
+
+        <div class='card'>
+          <h3 style='margin-top:0'>❓ Outros</h3>
+          <details><summary><b>Limites do plano Free</b></summary>
+            <p>• Até 10 Ingredientes<br>
+            • Até 5 Embalagens<br>
+            • Até 3 Receitas<br>
+            • Sem controle de estoque avançado</p>
+          </details>
+          <details><summary><b>Benefícios do plano PRO</b></summary>
+            <p>• Sem limites de cadastros<br>
+            • Controle de estoque<br>
+            • Ajuste de mão de obra<br>
+            • Configurações avançadas<br>
+            • Suporte prioritário<br><br>
+            <button class='btn' onclick="Router.go('pricing')">Conhecer PRO</button></p>
+          </details>
+        </div>
+
+        <div class='row' style='justify-content:flex-end'>
+          <button class='btn secondary' onclick='Router.back()'>Voltar</button>
+        </div>
+      </div>`; },
+    async manageSubscription(){
+      try{
+        const uid=firebase.auth().currentUser?.uid;
+        if(!uid){ UI.toast('Usuário não autenticado','error'); return; }
+        const userDoc=await firebase.firestore().collection('users').doc(uid).get();
+        const customerId=userDoc.data()?.stripeCustomerId;
+        if(!customerId){ UI.toast('Cliente Stripe não encontrado','error'); return; }
+        UI.toast('Abrindo portal...','normal');
+        const createPortalLink=firebase.functions().httpsCallable('createPortalLink');
+        const result=await createPortalLink({returnUrl:window.location.origin});
+        if(result.data?.url){ window.location.href=result.data.url; }
+        else{ UI.toast('Erro ao criar portal','error'); }
+      }catch(e){ console.error(e); UI.toast('Erro ao acessar portal: '+e.message,'error'); }
+    },
+    cancelSubscription(){
+      UI.modal('Cancelar Assinatura PRO', `
+        <div class='grid'>
+          <p>Tem certeza que deseja cancelar sua assinatura PRO?</p>
+          <p><b>O que acontece ao cancelar:</b></p>
+          <ul style='padding-left:20px;'>
+            <li>Você manterá acesso PRO até o fim do período pago</li>
+            <li>Após o vencimento, voltará ao plano Free automaticamente</li>
+            <li>Seus dados serão preservados</li>
+            <li>Você pode reativar a qualquer momento</li>
+          </ul>
+          <p class='hint'>Para confirmar o cancelamento, clique em "Abrir Portal" e cancele diretamente no painel do Stripe.</p>
+          <div class='row' style='gap:10px;justify-content:flex-end;margin-top:16px;'>
+            <button class='btn secondary' onclick='UI.closeModal()'>Voltar</button>
+            <button class='btn' onclick='UI.closeModal(); Views.manageSubscription()'>Abrir Portal</button>
+          </div>
+        </div>
+      `);
+    },
+    recipes_form(id){const r=App.state.recipes.find(x=>x.id===id)||{name:'',yieldQty:1,yieldUnit:'UNIDADE',items:[],packageId:'',packageQty:1,method:'',notes:'',bakeTime:40,mixTime:0,equipment:{primary:'oven',secondary:[]}};
+      // Normalize units for existing items
+      r.items=(r.items||[]).map(it=>{if(!it.unit){it.unit=Views._defaultItemUnit(it.id)}return it});
+      const pkgOpts=['<option value="">Sem embalagem</option>'].concat(App.state.packages.map(p=>`<option value='${p.id}' ${p.id===r.packageId?'selected':''}>${p.name}</option>`)).join('');const ingOpts=App.state.ingredients.map(i=>`<option value='${i.id}'>${i.name}</option>`).join('');document.getElementById('view').innerHTML=`<div class='grid'><div class='card'><div class='grid'><div><label>Nome</label><input id='r_name' class='input' value='${r.name}'/></div><div class='grid cols-2'><div><label>Rendimento</label><input id='r_yq' type='number' step='0.001' class='input' value='${r.yieldQty}'/></div><div><label>Unidade</label><select id='r_yu' class='input'>${['UNIDADE','KG','G','L','ML'].map(u=>`<option ${u===r.yieldUnit?'selected':''}>${u}</option>`).join('')}</select></div></div><div class='grid cols-2'><div><label>Embalagem</label><select id='r_pkg' class='input'>${pkgOpts}</select></div><div><label>Qtd de Embalagem</label><input id='r_pkg_qty' type='number' step='1' min='0' class='input' value='${r.packageQty||1}' placeholder='1'/><span class='hint'>Quantas embalagens esta receita usa</span></div></div></div></div><div class='card'><div class='row' style='justify-content:space-between'><b>Ingredientes</b><div class='row'><button class='btn secondary' onclick='Views.recipes_add_item()'>Adicionar</button></div></div><div id='r_items'></div></div><div class='card'><div class='grid'><div class='grid cols-2'><div><label>⏱️ Tempo de Forno (min)</label><input id='r_bake' class='input' type='number' step='1' min='0' value='${Number(r.bakeTime||0)}'/></div><div><label>⏱️ Tempo de Batedeira (min)</label><input id='r_mix' class='input' type='number' step='1' min='0' value='${Number(r.mixTime||0)}'/></div></div><div><label>🔧 Equipamento Principal</label><select id='r_eqp' class='input'><option value='oven' ${((r.equipment?.primary)||'oven')==='oven'?'selected':''}>Forno (padrão)</option><option value='mixer' ${((r.equipment?.primary)||'oven')==='mixer'?'selected':''}>Batedeira</option></select></div><div><label>Modo</label><textarea id='r_method' class='input' rows='3'>${r.method||''}</textarea></div><div><label>Notas</label><textarea id='r_notes' class='input' rows='3'>${r.notes||''}</textarea></div></div></div><div class='card'><div class='row'><button class='btn' onclick="Views.recipes_save('${r.id||''}')">Salvar</button></div></div></div>`;
+      // Função de renderização dos itens
+      function renderItems(){ const t=document.getElementById('r_items'); if(!t) return; const rows=(r.items||[]).map((it,idx)=>{ const ingOptsRow=App.state.ingredients.map(i=>`<option value='${i.id}' ${i.id===(it.id||'')?'selected':''}>${i.name}</option>`).join(''); const unitSel=it.unit||Views._defaultItemUnit(it.id); const val=(it.qty&&it.qty>0)?String(it.qty):''; return `<div class='row r_item' style='gap:8px;'>
+          <select class='input ingSel' onchange="Views.recipes_item_change(${idx},'id',this.value)">${ingOptsRow}</select>
+          <input class='input qty' type='number' step='0.001' inputmode='decimal' autocomplete='off' pattern='[0-9]*[.,]?[0-9]*' placeholder='0' value='${val}' onfocus="this.select()" onkeydown="if(this.value==='0'||this.value===''){ this.value=''; }" oninput="Views.recipes_item_change(${idx},'qty',this.value)"/>
+          <select class='input unitSel' onchange="Views.recipes_item_change(${idx},'unit',this.value)">${['G','KG','ML','L','UNIDADE'].map(u=>`<option ${u===unitSel?'selected':''}>${u}</option>`).join('')}</select>
+          <button class='btn error' type='button' onclick='Views.recipes_item_remove(${idx})'>Excluir</button>
+        </div>`; }).join(''); t.innerHTML= rows || `<div class='hint'>Nenhum ingrediente adicionado.</div>`; }
+      
+      // Expor helpers para o renderer interno
+      Views._rec=r; Views._renderItems=renderItems; renderItems();
+      
+      // Foco inicial
+      setTimeout(()=>{ document.getElementById('r_name')?.focus(); }, 0);
+    },
+    // Handlers para adicionar/salvar itens de receita via DOM
+    recipes_add_item(){ const r=Views._rec; const first=App.state.ingredients[0]; const defU=Views._defaultItemUnit(first?.id); r.items=r.items||[]; r.items.push({id:first?.id||'', qty:null, unit:defU}); Views._renderItems(); setTimeout(()=>{ const rows=document.querySelectorAll('#r_items .r_item'); const last=rows[rows.length-1]; const qty=last?.querySelector('.qty'); if(qty){ if(qty.value==='0' || qty.value===''){ qty.value=''; } qty.focus(); qty.select(); } },0); },
+    recipes_item_change(idx,field,val){
+      const r=Views._rec; const it=r.items[idx];
+      if(field==='id'){
+        const ing=App.state.ingredients.find(x=>x.id===val); const u=ing?.unit||'UNIDADE'; it.id=val; it.unit=u; Views._renderItems(); setTimeout(()=>{ const row=document.querySelectorAll('#r_items .r_item')[idx]; const qty=row?.querySelector('.qty'); if(qty){ qty.focus(); qty.select(); } },0);
+      } else if(field==='qty'){
+        // Atualiza somente o modelo, sem re-render, para não perder o foco enquanto digita
+        it.qty=Utils.num(val)||0;
+      } else if(field==='unit'){
+        it.unit=val; Views._renderItems();
+      }
+    },
+    recipes_item_remove(idx){const r=Views._rec;r.items.splice(idx,1);Views._renderItems();},
+    recipes_save(id){const name=document.getElementById('r_name')?.value.trim(); if(!name){UI.toast('Nome obrigatório','error');return} const yq=Utils.num(document.getElementById('r_yq')?.value); const yu=document.getElementById('r_yu')?.value; const pkg=(document.getElementById('r_pkg')?.value)||''; const pkgQty=Math.max(1,Utils.num(document.getElementById('r_pkg_qty')?.value||1)); const bake=Utils.num(document.getElementById('r_bake')?.value||0); const mix=Utils.num(document.getElementById('r_mix')?.value||0); const eqp=(document.getElementById('r_eqp')?.value)||'oven'; const items=[...document.querySelectorAll('#r_items .r_item')].map(row=>{const idv=row.querySelector('.ingSel')?.value||''; const qty=Utils.num(row.querySelector('.qty')?.value||0); const unit=(row.querySelector('.unitSel')?.value)||Views._defaultItemUnit(idv); return {id:idv,qty,unit};}).filter(x=>x.id); const data={name,yieldQty:yq,yieldUnit:yu,packageId:pkg,packageQty:pkgQty,items,method:(document.getElementById('r_method')?.value||''),notes:(document.getElementById('r_notes')?.value||''),bakeTime:bake,mixTime:mix,equipment:{primary:eqp,secondary:(mix>0?['mixer']:[])}}; if(id) Store.update('recipes',id,data); else if(!Store.add('recipes',data)) return; App.state.setup.recipeDone=true; App.save(); UI.toast('Receita salva','success'); Router.go('recipes');},
+    recipeCost(r,m){let ing=0,pk=0;for(const it of r.items){const i=App.state.ingredients.find(x=>x.id===it.id);if(!i)continue;const src=i.unit;const dst=it.unit||src;let baseUnit=src; // normalize to grams/ml when needed
+      if(src==='KG') baseUnit='G'; if(src==='L') baseUnit='ML';
+      const qtyBase = Utils.convert(it.qty||0,dst,baseUnit);
+      let pricePerBase=0; if(i.qtyBought>0){ if(src==='KG') pricePerBase=i.price/(i.qtyBought*1000); else if(src==='L') pricePerBase=i.price/(i.qtyBought*1000); else pricePerBase=i.price/i.qtyBought; }
+      ing += (pricePerBase||0)*qtyBase*m }
+      if(r.packageId){const p=App.state.packages.find(x=>x.id===r.packageId);if(p){const pkQty=p.qty||1;const pricePerUnit=p.price/pkQty;const packageQtyUsed=(r.packageQty||1)*m;pk+=pricePerUnit*packageQtyUsed}}return {ingredientes:ing,embalagem:pk,subtotal:ing+pk}},
+    calculator(params){const rid=(params&&params.recipeId)||(App.state.recipes[0]?App.state.recipes[0].id:'');const eq=App.state.settings?.equipment||{type:'electric'};const eqLabel={electric:'Elétrico',gas:'Gás',wood:'Lenha'}[eq.type]||'Elétrico';document.getElementById('view').innerHTML=`<div class='hero'><h2>🧮 Preço</h2><p>Calcule o preço sugerido com base em custos</p><svg class='art' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'><defs><linearGradient id='g2' x1='0' x2='1' y1='0' y2='1'><stop offset='0' stop-color='var(--accent)'/><stop offset='1' stop-color='var(--accent-dark)'/></linearGradient></defs><circle cx='90' cy='30' r='28' fill='url(#g2)'/></svg></div><div class='grid'><div class='card'><div class='row' style='justify-content:space-between'><b>Calculadora</b><div class='row'><span class='chip'>Perfil: ${eqLabel}</span><button class='btn secondary' onclick="Router.go('profile')">Equipamento</button></div></div><div class='grid'><div class='section'><h4>Receita</h4><select id='c_recipe' class='input' title='Selecione a receita base'>${App.state.recipes.map(x=>`<option value='${x.id}' ${x.id===rid?'selected':''}>${x.name}</option>`).join('')}</select></div><div class='grid cols-2'><div class='section'><h4>Quantidade</h4><input id='c_mult' type='number' step='0.1' class='input' value='1' placeholder='ex.: 1, 2, 2.5' title='Multiplica o rendimento da receita'/><span class='hint'>Multiplica o rendimento da receita</span></div><div class='section'><h4>Estratégia de Preço</h4><select id='c_price_strategy' class='input'><option value='margin' selected>Margem %</option><option value='markup'>Markup %</option><option value='fixed'>Preço Fixo</option></select><span class='hint'>Escolha como calcular o preço</span></div></div><div class='grid cols-3'><div class='section' id='fld_margin'><h4>Margem % <button class='help-btn' onclick="UI.help('margin')">?</button></h4><input id='c_margin' type='number' step='0.1' class='input' value='30' placeholder='ex.: 40' title='Percentual de margem sobre o preço'/><span class='hint'>Geralmente entre 30% e 50%</span></div><div class='section' id='fld_markup' style='display:none'><h4>Markup %</h4><input id='c_markup' type='number' step='0.1' class='input' value='50' placeholder='ex.: 50' title='Percentual sobre o custo total'/><span class='hint'>Ex.: 50% → preço = custo × 1,5</span></div><div class='section' id='fld_price_fixed' style='display:none'><h4>Preço Fixo (R$)</h4><input id='c_price_fixed' type='number' step='0.01' class='input' value='0' placeholder='ex.: 19,90' title='Preço final desejado'/><span class='hint'>Define o preço de venda direto</span></div></div><div class='grid cols-2'><div class='section'><h4>Fixos <button class='help-btn' onclick="UI.help('fixed')">?</button></h4><input id='c_fixed' type='number' step='0.01' class='input' value='0' placeholder='ex.: 8, 12'/><span class='hint'>Despesas fixas médias por lote</span></div><div class='section'><h4>Forno (min)</h4><input id='c_bake' type='number' step='1' class='input' value='0' placeholder='ex.: 25' title='Se 0, usa o tempo salvo na receita'/><span class='hint'>Se 0, usa o tempo salvo na receita</span></div></div><div id='calc_result'></div><div class='row' style='justify-content:flex-end'><button class='btn' onclick='Views.calculate_now()'>Calcular</button></div></div></div></div>`;
+      const recipeSel=document.getElementById('c_recipe'); if(recipeSel){ recipeSel.onchange=(e)=>Views.calculator({recipeId:e.target.value}); }
+      const stratSel=document.getElementById('c_price_strategy'); const fldMargin=document.getElementById('fld_margin'); const fldMarkup=document.getElementById('fld_markup'); const fldFixed=document.getElementById('fld_price_fixed');
+      function updatePricingFields(){ const v=stratSel?.value||'margin'; if(fldMargin) fldMargin.style.display=(v==='margin')?'block':'none'; if(fldMarkup) fldMarkup.style.display=(v==='markup')?'block':'none'; if(fldFixed) fldFixed.style.display=(v==='fixed')?'block':'none'; }
+      if(stratSel){ stratSel.onchange=updatePricingFields; updatePricingFields(); }
+      // Adicionar equipamentos personalizados (PRO only)
+      const isPro=(App.state.user.plan||'free')==='pro';
+      const customEqList=App.state.settings?.customEquipments||[];
+      if(isPro && customEqList.length>0){
+        const calcBtn=document.querySelector('.card button.btn:not(.secondary)');
+        if(calcBtn && calcBtn.textContent.includes('Calcular')){
+          const customEqCard=document.createElement('div');
+          customEqCard.className='card';
+          customEqCard.style.marginTop='16px';
+          customEqCard.innerHTML=`<b>⚙️ Equipamentos Extras (Opcional)</b><div class='grid' style='gap:12px;margin-top:12px;'>${customEqList.map(eq=>`<label class='row' style='gap:8px;align-items:center;justify-content:space-between;'><div class='row' style='gap:8px;'><input type='checkbox' id='ceq_${eq.id}' onchange='Views.calculate_now()'/><span>${eq.name}</span></div><div class='row' style='gap:8px;align-items:center;'><input type='number' id='ceq_time_${eq.id}' class='input' style='width:80px;' placeholder='Tempo' step='1' min='0' value='0' onchange='Views.calculate_now()'/><span class='hint'>min</span></div></label>`).join('')}</div><span class='hint' style='margin-top:8px;display:block;'>Marque os equipamentos usados e defina o tempo de uso em minutos.</span>`;
+          calcBtn.parentElement.parentElement.parentElement.appendChild(customEqCard);
+        }
+      }
+      applyPlanRestrictions();
+    },
+    calculate_now(){Utils.ensureMonth();const rid=document.getElementById('c_recipe').value;const r=App.state.recipes.find(x=>x.id===rid);if(!r){UI.toast('Selecione receita','error');return}const mult=Math.max(0.001,Utils.num(document.getElementById('c_mult').value));const strat=(document.getElementById('c_price_strategy')?.value)||'margin';const margin=Utils.num(document.getElementById('c_margin')?.value);const markup=Utils.num(document.getElementById('c_markup')?.value);const priceFixed=Utils.num(document.getElementById('c_price_fixed')?.value);let fixed=Math.max(0,Utils.num(document.getElementById('c_fixed').value));const inputBake=Utils.num(document.getElementById('c_bake')?.value||0);const bakeMin=inputBake>0?inputBake:(Number(r.bakeTime)||0);const mixMin=Math.max(0,Number(r.mixTime)||0); if(strat==='margin' && (margin<=0||margin>=100)){UI.toast('Margem deve estar entre 0 e 100 (exclui 0 e 100)','error');return} if(strat==='markup' && (markup<0||markup>500)){UI.toast('Markup 0-500','error');return} if(strat==='fixed' && (priceFixed<=0)){UI.toast('Preço fixo deve ser > 0','error');return}
+      // Validação de estoque apenas para PRO e se o controle estiver ativado
+      const useStockControl=App.state.settings?.useStockControl??false;
+      if((App.state.user.plan||'free')==='pro' && useStockControl){
+        for(const it of r.items){const ing=App.state.ingredients.find(x=>x.id===it.id);if(!ing)continue;const src=ing.unit;let baseUnit=src; if(src==='KG') baseUnit='G'; if(src==='L') baseUnit='ML'; const needBase=Utils.convert(Utils.num(it.qty||0),it.unit||baseUnit,baseUnit)*(mult||1); let stockBase=Utils.num(ing.stock||0); if(src==='KG') stockBase*=1000; if(src==='L') stockBase*=1000; if(needBase>stockBase+1e-9){UI.toast(`Sem estoque suficiente de ${ing.name}`,'error');return}}
+      }
+      const base=Views.recipeCost(r,mult);
+      // Equipamentos: usar lista se disponível; senão, fallback ao modelo antigo (equipment)
+      let ovenCost=0, mixerCost=0; const equipments=App.state.settings?.equipments||[];
+      if(equipments.length>0){
+        const oven=equipments.find(e=>e.isActive && (e.type||'').startsWith('oven_'));
+        if(oven && bakeMin>0){
+          if(oven.type==='oven_electric'){
+            const kwh=(Utils.num(oven.power)/1000)*(bakeMin/60);
+            ovenCost = kwh*Utils.num(oven.kwhPrice);
+          }else if(oven.type==='oven_gas' || oven.type==='oven_wood'){
+            const kg = Utils.num(oven.kgPerHour)*(bakeMin/60);
+            ovenCost = kg*Utils.num(oven.kgPrice);
+          }
+        }
+        const mixer=equipments.find(e=>e.isActive && e.type==='mixer');
+        if(mixer && mixMin>0){
+          const kwh=(Utils.num(mixer.power)/1000)*(mixMin/60);
+          mixerCost = kwh*Utils.num(mixer.kwhPrice);
+        }
+      } else {
+        const eq=App.state.settings?.equipment || {type:'electric',electric:{kwhPrice:0.68,ovenKw:1800}};
+        const hours=bakeMin/60; if(eq.type==='electric'){ const kwh=(eq.electric?.ovenKw/1000||1800/1000)*hours; ovenCost = kwh*(eq.electric?.kwhPrice||0.68); } else if(eq.type==='gas'){ const kg=(eq.gas?.kgPerHour||0.3)*hours; ovenCost = kg*(eq.gas?.kgPrice||8.0); } else if(eq.type==='wood'){ const kg=(eq.wood?.kgPerHour||2.0)*hours; ovenCost = kg*(eq.wood?.kgPrice||2.5); }
+      }
+      // Labor automático baseado em tempo real de trabalho (v1.3 - AJUSTADO)
+      const totalUnits=Math.max(1, Number(r.yieldQty||1) * mult);
+      const hourlyRate = (App.state.settings?.labor?.hourlyRate ?? 25); // R$/hora
+      
+      // Calcular tempo de trabalho ativo baseado na receita
+      // Tempo base: preparação + moldagem (~30% do tempo total de produção)
+      const prepTimeMin = Math.max(5, (bakeMin + mixMin) * 0.3); // Mínimo 5 min
+      
+      // Tempo por lote (não por unidade!)
+      const batchTimeHours = prepTimeMin / 60;
+      
+      // Custo base de mão de obra
+      let labor = hourlyRate * batchTimeHours;
+      
+      // Ajuste por volume (economia de escala)
+      if (totalUnits > 10 && totalUnits <= 30) labor *= 1.1; // Lotes médios +10%
+      if (totalUnits > 30 && totalUnits <= 50) labor *= 1.2; // Lotes grandes +20%
+      if (totalUnits > 50) labor *= 1.3; // Produção industrial +30%
+      
+      const laborMin = App.state.settings?.labor?.laborMin ?? 2; // Reduzido de 5 para 2
+      const laborMax = App.state.settings?.labor?.laborMax ?? 60;
+      labor = Math.max(laborMin, Math.min(laborMax, labor));
+      // Override manual (PRO) somente se o usuário definiu explicitamente e o campo não está vazio
+      const _ov = App.state.tempLaborOverride;
+      const _ovEl = document.getElementById('c_labor_edit');
+      const _hasOv = _ovEl ? String(_ovEl.value||'').trim()!=='' : Number.isFinite(_ov);
+      if((App.state.user.plan||'free')==='pro'){
+        if(_hasOv && Number.isFinite(_ov)){
+          labor = Math.max(0, _ov);
+        } else {
+          // limpa override se o campo estiver vazio
+          App.state.tempLaborOverride=undefined; App.save();
+        }
+      }
+      // Garante limites mesmo após override
+      labor = Math.max(laborMin, Math.min(laborMax, labor));
+      // ===== FIM NOVO BLOCO
+      // Adicionar custo de equipamentos personalizados (se selecionados)
+      let customEqCost=0;
+      const customEqList=App.state.settings?.customEquipments||[];
+      if(customEqList.length>0){
+        customEqList.forEach(eq=>{
+          const chk=document.getElementById(`ceq_${eq.id}`);
+          if(chk&&chk.checked){
+            const timeInput=document.getElementById(`ceq_time_${eq.id}`);
+            const timeMin=timeInput?Utils.num(timeInput.value):bakeMin;
+            if(timeMin>0){
+              if(eq.type==='electric'){
+                const kwh=(Utils.num(eq.power)/1000)*(timeMin/60);
+                customEqCost+=kwh*Utils.num(eq.kwhPrice);
+              }else{
+                const kg=Utils.num(eq.kgPerHour)*(timeMin/60);
+                customEqCost+=kg*Utils.num(eq.kgPrice);
+              }
+            }
+          }
+        });
+      }
+      const equipmentCost=ovenCost+mixerCost+customEqCost;
+      // Custo total EXCLUINDO mão de obra (mão de obra informativa)
+      const total=base.subtotal+fixed+equipmentCost;
+      // Preço final DEVE incluir mão de obra
+      const baseComLabor = total + labor;
+      let preco=baseComLabor;
+      if(strat==='margin'){
+        const denom=(1-margin/100); if(denom<=0){UI.toast('Margem inválida','error'); return}
+        preco= baseComLabor/denom;
+      } else if(strat==='markup'){
+        preco= baseComLabor*(1+markup/100);
+      } else if(strat==='fixed'){
+        preco= priceFixed;
+      }
+      const lucro=preco-baseComLabor; const mReal=preco>0?(lucro/preco)*100:0;
+      const isPro=(App.state.user.plan||'free')==='pro';
+      // Gerar detalhes dos equipamentos personalizados
+      let customEqDetails='';
+      if(customEqCost>0 && customEqList.length>0){
+        customEqList.forEach(eq=>{
+          const chk=document.getElementById(`ceq_${eq.id}`);
+          if(chk&&chk.checked){
+            const timeInput=document.getElementById(`ceq_time_${eq.id}`);
+            const timeMin=timeInput?Utils.num(timeInput.value):0;
+            let eqCost=0;
+            if(timeMin>0){
+              if(eq.type==='electric'){
+                eqCost=(Utils.num(eq.power)/1000)*(timeMin/60)*Utils.num(eq.kwhPrice);
+              }else{
+                eqCost=Utils.num(eq.kgPerHour)*(timeMin/60)*Utils.num(eq.kgPrice);
+              }
+            }
+            customEqDetails+=`<div class='row' style='justify-content:space-between'><span class='row' style='gap:6px;align-items:center'>⚙️<span>${eq.name} (${timeMin}min)</span></span><b>${Utils.money(eqCost)}</b></div>`;
+          }
+        });
+      }
+      const details=`<div class='grid' style='gap:10px;'>
+        <div class='row' style='justify-content:space-between'><span class='row' style='gap:6px;align-items:center'>${Icons.ingredient}<span>Ingredientes</span></span><b>${Utils.money(base.ingredientes)}</b></div>
+        <div class='row' style='justify-content:space-between'><span class='row' style='gap:6px;align-items:center'>${Icons.package}<span>Embalagem</span></span><b>${Utils.money(base.embalagem)}</b></div>
+        <div class='row' style='justify-content:space-between'><span class='row' style='gap:6px;align-items:center'>${Icons.oven}<span>Forno</span></span><b>${Utils.money(ovenCost)}</b></div>
+        ${mixerCost>0?`<div class='row' style='justify-content:space-between'><span class='row' style='gap:6px;align-items:center'>${Icons.mixer}<span>Batedeira</span></span><b>${Utils.money(mixerCost)}</b></div>`:''}
+        ${customEqDetails}
+        <div class='row' style='justify-content:space-between'><span class='row' style='gap:6px;align-items:center'>${Icons.clock}<span>Tempos</span></span><b>Forno: ${bakeMin} min • Batedeira: ${mixMin} min</b></div>
+        <div class='row' style='justify-content:space-between'><span class='row' style='gap:6px;align-items:center'>${Icons.labor}<span>Mão de Obra</span></span><b>${Utils.money(labor)}</b></div>
+        <div class='row' style='justify-content:space-between'><span class='row' style='gap:6px;align-items:center'>${Icons.fixed}<span>Fixos</span></span><b>${Utils.money(fixed)}</b></div>
+        <div class='row' style='justify-content:space-between'><span>🧮 Unidades Produzidas</span><b>${totalUnits} ${r.yieldUnit||'UNIDADE'}</b></div>
+      </div>`
+;
+      const hasOverrideActive = isPro && Number.isFinite(App.state.tempLaborOverride);
+      document.getElementById('calc_result').innerHTML=`
+        <div class='card'>
+          <div class='row' style='justify-content:space-between;align-items:center;'>
+            <div><b>🎯 Preço Sugerido ${strat==='margin'?`(Margem ${margin}%)`:strat==='markup'?`(Markup ${markup}%)`:`(Preço Fixo)`}</b></div>
+            <div style='font-size:22px;font-weight:800;'>${Utils.money(preco)}</div>
+          </div>
+          <div style='margin-top:8px;'>
+            <details ${isPro && (hasOverrideActive || (App.state._keepDetailsOpen===true)) ? 'open' : ''}>
+              <summary style='cursor:pointer;'>Ver detalhamento</summary>
+              <div style='margin-top:10px;'>${details}
+                ${isPro?`<div class='grid' style='margin-top:12px;'>
+                  <label>Ajustar Mão de Obra (PRO)</label>
+                  <input id='c_labor_edit' type='number' step='0.01' class='input' inputmode='decimal' pattern='[0-9]*[.,]?[0-9]*' value='${Number.isFinite(App.state.tempLaborOverride)?Number(App.state.tempLaborOverride).toFixed(2):labor.toFixed(2)}'
+                    onfocus="this.select(); if(this.value==='0'||this.value==='0.00'){ this.value=''; }"
+                    oninput="let val=(this.value||'').replace(',','.'); if(val===''){ App.state.tempLaborOverride=undefined; } else { const v=Number(val); if(Number.isFinite(v)) App.state.tempLaborOverride=v; } App.save(); if(window._laborDeb){ clearTimeout(window._laborDeb); } App.state._keepDetailsOpen=true; window._laborDeb=setTimeout(()=>{ Views.calculate_now(); }, 250);"
+                    onkeydown="if(event.key==='Enter'){ event.preventDefault(); if(window._laborDeb){ clearTimeout(window._laborDeb); } App.state._keepDetailsOpen=true; Views.calculate_now(); }"
+                  />
+                  <span class='hint'>Deixe em branco para usar o cálculo automático. Edite para sobrescrever neste cálculo.</span>
+                  ${(function(){ const _hasOvEl = document.getElementById('c_labor_edit'); })?'':''}
+                </div>`:`<div class='hint' style='margin-top:12px;'>Para ajustar mão de obra em tempo real, assine o plano PRO.</div>`}
+              </div>
+            </details>
+          </div>
+          ${hasOverrideActive?
+            `<div class='row' style='justify-content:space-between;gap:8px;margin-top:12px;'>
+               <div class='hint'>Você alterou a mão de obra para este cálculo.</div>
+               <div class='row' style='gap:8px;'>
+                 <button class='btn secondary' onclick='(function(){ App.state.tempLaborOverride=undefined; App.save(); Views.calculate_now(); })()'>Descartar</button>
+                 <button class='btn' onclick='(function(){ Views.save_calc("${r.id}", ${mult}, ${preco}, false); UI.toast("Cálculo salvo manualmente","success"); })()'>Salvar manualmente</button>
+               </div>
+             </div>`
+            :
+            `<div class='row' style="justify-content:flex-end;margin-top:12px;">
+               <button class='btn secondary' onclick="navigator.clipboard.writeText('Preço: ${Utils.money(preco)}')">Copiar</button>
+               <span class='hint'>Salvo automaticamente</span>
+             </div>`}
+        </div>`; 
+      // Salvar automaticamente somente quando NÃO há override ativo (PRO)
+      if(!hasOverrideActive){ Views.save_calc(rid,mult,preco,true); }
+      App.state._keepDetailsOpen=false; applyPlanRestrictions(); },
+    save_calc(rid,mult,price,silent=false){App.state.calculations.push({id:Utils.id(),date:Date.now(),recipeId:rid,recipeName:(App.state.recipes.find(r=>r.id===rid)||{}).name||'-',mult,price});if(App.state.user.plan==='free'){Utils.ensureMonth();App.state.limitsUsed.calculationsThisMonth++;if(App.state.limitsUsed.calculationsThisMonth>Limits.free.calculationsPerMonth){UI.upgrade('calculations')}}App.save(); if(!silent) UI.toast('Cálculo salvo','success')},
+    history(params){ const v=document.getElementById('view'); const page=Math.max(1, Number(params?.page)||1); const per=20; const all=[...App.state.calculations].slice().reverse(); const pager=Utils.paginateList(all,page,per); const rows=pager.items.map(c=>{ const d=new Date(c.date); return `<div class='list-item' style='display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid rgba(0,0,0,.06)'><div><div style='font-weight:600;'>${c.recipeName||'-'} <span class='chip'>x${c.mult||1}</span></div><div class='sub' style='color:var(--muted)'>${d.toLocaleDateString()} • ${d.toLocaleTimeString()}</div></div><div style='font-weight:800;'>${Utils.money(c.price)}</div></div>`; }).join('') || `<div class='empty'>Sem cálculos</div>`; const pagerHtml = pager.pages>1?`<div class='row' style='justify-content:center;gap:8px;margin-top:10px;'><button class='btn secondary' ${pager.page<=1?'disabled':''} onclick="Views.history({page:${pager.page-1}})">Anterior</button><span class='chip'>Página ${pager.page}/${pager.pages}</span><button class='btn secondary' ${pager.page>=pager.pages?'disabled':''} onclick="Views.history({page:${pager.page+1}})">Próxima</button></div>`:''; v.innerHTML=`<div class='hero'><h2>🧾 Histórico</h2><p>Todos os cálculos realizados</p></div><div class='card'><div class='row' style='justify-content:space-between'><b>Histórico de Cálculos</b><button class='btn secondary' onclick="Router.go('calculator')">Novo</button></div><div class='list'>${rows}</div>${pagerHtml}</div>`; },
+    profile(){let u=App.state.user||{};try{const cu=JSON.parse(SafeStorage.get(AUTH_CURRENT_KEY,'null')||'null'); if(cu&&cu.email){u=Object.assign({},u,{name:cu.name||u.name,email:cu.email||u.email});}}catch(e){} const eq=App.state.settings?.equipment||defaultState.settings.equipment;const lb=App.state.settings?.labor||{hourlyRate:25,laborMin:2,laborMax:60};const isPro=(App.state.user.plan||'free')==='pro';const useStockControl=App.state.settings?.useStockControl??false;const eqList=App.state.settings?.equipments||[];const mixerSaved=eqList.find(e=>e.type==='mixer'&&e.isActive);const mixerKw=mixerSaved?.power||3000;const mixerKwh=mixerSaved?.kwhPrice||0.68;document.getElementById('view').innerHTML=`<div class='hero'><h2>👤 Perfil</h2><p>Dados e configurações do app</p><svg class='art' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'><circle cx='90' cy='30' r='26' fill='rgba(255,255,255,.14)'/></svg></div><div class='grid'><div class='card'><div class='row' style='justify-content:space-between'><b>Perfil</b><span class='chip'>${Views.planLabel()}</span></div><div class='grid cols-2'><div><label>Nome</label><input id='pr_name' class='input' value='${u.name||''}' disabled/></div><div><label>Email</label><input id='pr_email' class='input' value='${u.email||''}' disabled/></div></div></div><div class='card'><b>Equipamento ${!isPro?'<span class="chip">💎 edição PRO</span>':''}</b><div class='grid'><div><label>Tipo <button class='help-btn' onclick="UI.help('equipType')">?</button></label><select id='eq_type' class='input' onchange='Views.profile_change_eq_type()'><option ${eq.type==='electric'?'selected':''} value='electric'>Elétrico</option><option ${eq.type==='gas'?'selected':''} value='gas'>Gás</option><option ${eq.type==='wood'?'selected':''} value='wood'>Lenha</option></select><span class='hint'>Escolha o tipo de forno que você usa</span></div><div class='grid cols-2' id='eq_fields_container'>${eq.type==='electric'?`<div><label id='eq_label1'>Preço kWh (R$) <button class='help-btn' onclick="UI.help('equipKwh')">?</button></label><input id='eq_value1' class='input' type='number' step='0.01' value='${eq.electric?.kwhPrice??0.68}' ${isPro?'':'disabled'}/></div><div><label id='eq_label2'>Potência do forno (W) <button class='help-btn' onclick="UI.help('equipPower')">?</button></label><input id='eq_value2' class='input' type='number' step='1' value='${eq.electric?.ovenKw??1800}' ${isPro?'':'disabled'}/></div>`:eq.type==='gas'?`<div><label id='eq_label1'>Preço do Gás (R$/kg) <button class='help-btn' onclick="UI.help('equipPrice')">?</button></label><input id='eq_value1' class='input' type='number' step='0.01' value='${eq.gas?.kgPrice??8.0}' ${isPro?'':'disabled'}/></div><div><label id='eq_label2'>Consumo (kg/h) <button class='help-btn' onclick="UI.help('equipKg')">?</button></label><input id='eq_value2' class='input' type='number' step='0.01' value='${eq.gas?.kgPerHour??0.3}' ${isPro?'':'disabled'}/></div>`:`<div><label id='eq_label1'>Preço da Lenha (R$/kg) <button class='help-btn' onclick="UI.help('equipPrice')">?</button></label><input id='eq_value1' class='input' type='number' step='0.01' value='${eq.wood?.kgPrice??2.5}' ${isPro?'':'disabled'}/></div><div><label id='eq_label2'>Consumo (kg/h) <button class='help-btn' onclick="UI.help('equipKg')">?</button></label><input id='eq_value2' class='input' type='number' step='0.01' value='${eq.wood?.kgPerHour??2.0}' ${isPro?'':'disabled'}/></div>`}</div><div class='row' style='gap:10px;justify-content:flex-end;'>${isPro?`<button class='btn secondary' onclick='Views.profile_save_eq()'>Salvar Forno</button>`:`<button class='btn' onclick="UI.upgrade('equipment')">Fazer Upgrade para editar</button>`}</div></div></div><div class='card'><b>🔧 Batedeira (opcional)</b><div class='grid'><label class='row' style='justify-content:flex-start;gap:8px;'><input id='eq_has_mixer' type='checkbox' ${mixerSaved?'checked':''} ${isPro?'':'disabled'}/> Usar batedeira nos cálculos</label><div class='grid cols-2'><div><label>Potência (W) <button class='help-btn' onclick="UI.help('equipPower')">?</button></label><input id='eq_mixer_kw' class='input' type='number' step='1' value='${mixerKw}' ${mixerSaved&&isPro?'':'disabled'}/></div><div><label>Preço kWh (R$) <button class='help-btn' onclick="UI.help('equipKwh')">?</button></label><input id='eq_mixer_kwh' class='input' type='number' step='0.01' value='${mixerKwh}' ${mixerSaved&&isPro?'':'disabled'}/></div></div><div class='row' style='gap:10px;justify-content:flex-end;'>${isPro?`<button class='btn secondary' onclick='Views.profile_save_equipments()'>Salvar Batedeira</button>`:`<button class='btn' onclick="UI.upgrade('mixer')">Fazer Upgrade para editar</button>`}</div></div></div><div class='card'><b>Mão de Obra ${!isPro?'<span class="chip">💎 edição PRO</span>':''}</b><div class='grid cols-2'><div><label>Valor por hora (R$/h) <button class='help-btn' onclick="UI.help('laborRate')">?</button></label><input id='lb_rate' class='input' type='number' step='0.01' value='${lb.hourlyRate??25}' ${isPro?'':'disabled'}/></div><div><label>Labor mínimo (R$) <button class='help-btn' onclick="UI.help('laborMin')">?</button></label><input id='lb_min' class='input' type='number' step='0.01' value='${lb.laborMin??5}' ${isPro?'':'disabled'}/></div><div><label>Labor máximo (R$) <button class='help-btn' onclick="UI.help('laborMax')">?</button></label><input id='lb_max' class='input' type='number' step='1' value='${lb.laborMax??60}' ${isPro?'':'disabled'}/></div></div><div class='row' style='gap:10px;justify-content:flex-end;margin-top:8px;'>${isPro?`<button class='btn secondary' onclick='Views.profile_save_labor()'>Salvar</button>`:`<button class='btn' onclick="UI.upgrade('labor')">Fazer Upgrade para editar</button>`}</div><span class='hint'>${isPro?'':'No plano FREE a mão de obra é calculada automaticamente.'}</span></div>${isPro?`<div class='card'><div class='row' style='justify-content:space-between'><b>⚙️ Equipamentos Personalizados</b><button class='btn secondary' onclick='Views.custom_equipment_form()'>+ Adicionar</button></div><div id='custom_eq_list'>${Views.render_custom_equipments()}</div><span class='hint'>Adicione equipamentos extras (ex: 2° forno, masseira) para incluir no cálculo.</span></div>`:''}<div class='card'><b>📦 Controle de Estoque</b><div class='grid'><label class='row' style='gap:8px;justify-content:flex-start;'><input type='checkbox' id='use_stock_control' ${useStockControl?'checked':''} ${isPro?'':'disabled'} onchange='Views.profile_toggle_stock_control()'/><span>Ativar controle de estoque</span></label><span class='hint'>${isPro?'Quando ativado, o sistema validará se há estoque suficiente antes de calcular preços.':'Disponível apenas no plano PRO. Faça upgrade para gerenciar estoques.'}</span></div></div></div>`;const chk=document.getElementById('eq_has_mixer'); const fKw=document.getElementById('eq_mixer_kw'); const fKwh=document.getElementById('eq_mixer_kwh'); if(chk && fKw && fKwh){ chk.onchange=()=>{const en=chk.checked && isPro; fKw.disabled=!en; fKwh.disabled=!en}; }},
+    profile_change_eq_type(){const type=document.getElementById('eq_type').value;const isPro=(App.state.user.plan||'free')==='pro';const defaults={electric:{v1:0.68,v2:1800,l1:'Preço kWh (R$)',l2:'Potência do forno (W)',help1:'equipKwh',help2:'equipPower'},gas:{v1:8.0,v2:0.3,l1:'Preço do Gás (R$/kg)',l2:'Consumo (kg/h)',help1:'equipPrice',help2:'equipKg'},wood:{v1:2.5,v2:2.0,l1:'Preço da Lenha (R$/kg)',l2:'Consumo (kg/h)',help1:'equipPrice',help2:'equipKg'}};const d=defaults[type];const container=document.getElementById('eq_fields_container');if(!container||!d) return;container.innerHTML=`<div><label id='eq_label1'>${d.l1} <button class='help-btn' onclick="UI.help('${d.help1}')">?</button></label><input id='eq_value1' class='input' type='number' step='0.01' value='${d.v1}' ${isPro?'':'disabled'}/></div><div><label id='eq_label2'>${d.l2} <button class='help-btn' onclick="UI.help('${d.help2}')">?</button></label><input id='eq_value2' class='input' type='number' step='${type==='electric'?'1':'0.01'}' value='${d.v2}' ${isPro?'':'disabled'}/></div>`; },
+    profile_save_eq(){const type=document.getElementById('eq_type').value;const s=App.state.settings; s.equipment=s.equipment||{type:'electric',electric:{},gas:{},wood:{}}; s.equipment.type=type; if(type==='electric'){ s.equipment.electric={kwhPrice:Utils.num(document.getElementById('eq_value1').value), ovenKw:Utils.num(document.getElementById('eq_value2').value)} } else if(type==='gas'){ s.equipment.gas={kgPrice:Utils.num(document.getElementById('eq_value1').value), kgPerHour:Utils.num(document.getElementById('eq_value2').value)} } else { s.equipment.wood={kgPrice:Utils.num(document.getElementById('eq_value1').value), kgPerHour:Utils.num(document.getElementById('eq_value2').value)} } App.state.setup=App.state.setup||{}; App.state.setup.equipmentDone=true; App.save(); UI.toast('Equipamento salvo','success') },
+    profile_save_equipments(){const s=App.state.settings; s.equipments=[]; const type=document.getElementById('eq_type').value; if(type==='electric') s.equipments.push({type:'oven_electric',name:'Forno Elétrico',kwhPrice:Utils.num(document.getElementById('eq_value1').value),power:Utils.num(document.getElementById('eq_value2').value),isActive:true}); else if(type==='gas') s.equipments.push({type:'oven_gas',name:'Forno a Gás',kgPrice:Utils.num(document.getElementById('eq_value1').value),kgPerHour:Utils.num(document.getElementById('eq_value2').value),isActive:true}); else s.equipments.push({type:'oven_wood',name:'Forno a Lenha',kgPrice:Utils.num(document.getElementById('eq_value1').value),kgPerHour:Utils.num(document.getElementById('eq_value2').value),isActive:true}); const hasMixer=!!document.getElementById('eq_has_mixer')?.checked; if(hasMixer){ s.equipments.push({type:'mixer',name:'Batedeira',kwhPrice:Utils.num(document.getElementById('eq_mixer_kwh').value),power:Utils.num(document.getElementById('eq_mixer_kw').value),isActive:true}); } App.save(); UI.toast('Equipamentos salvos','success'); },
+    profile_save_labor(){if((App.state.user.plan||'free')!=='pro'){ UI.upgrade('labor'); return } const rate=Utils.num(document.getElementById('lb_rate').value); const lbMin=Utils.num(document.getElementById('lb_min')?.value); const lbMax=Utils.num(document.getElementById('lb_max')?.value); if(rate<=0){UI.toast('Valores inválidos','error');return} if(lbMin<0||lbMax<=0||lbMax<lbMin){UI.toast('Limites de mão de obra inválidos','error');return} App.state.settings=App.state.settings||{}; App.state.settings.labor={hourlyRate:rate, laborMin:lbMin||0, laborMax:lbMax||Infinity}; App.save(); UI.toast('Mão de Obra salva','success')},
+    profile_toggle_stock_control(){if((App.state.user.plan||'free')!=='pro'){ UI.upgrade('stock'); return } const enabled=!!document.getElementById('use_stock_control')?.checked; App.state.settings=App.state.settings||{}; App.state.settings.useStockControl=enabled; App.save(); UI.toast(enabled?'Controle de estoque ativado':'Controle de estoque desativado','success')},
+    profile_save(){App.state.user.name=document.getElementById('pr_name').value.trim();App.state.user.email=document.getElementById('pr_email').value.trim();App.save();UI.toast('Perfil salvo','success')},
+    render_custom_equipments(){
+      const customEq=App.state.settings?.customEquipments||[];
+      if(customEq.length===0) return '<div class="hint">Nenhum equipamento personalizado cadastrado.</div>';
+      return customEq.map(eq=>`<div class='list-item'><div class='row' style='gap:12px;align-items:center;flex:1;'><div class='icon' style='color:var(--primary)'>⚙️</div><div class='info'><div class='title'>${eq.name}</div><div class='sub'>${eq.type==='electric'?`Elétrico: ${eq.power}W • R$${eq.kwhPrice}/kWh`:`${eq.type==='gas'?'Gás':'Lenha'}: ${eq.kgPerHour}kg/h • R$${eq.kgPrice}/kg`}</div></div></div><div class='row' style='gap:8px;'><button class='btn secondary' onclick="Views.custom_equipment_form('${eq.id}')">Editar</button><button class='btn error' onclick="Views.custom_equipment_delete('${eq.id}')">Excluir</button></div></div>`).join('');
+    },
+    custom_equipment_form(id){
+      const eq=id?(App.state.settings?.customEquipments||[]).find(e=>e.id===id):{name:'',type:'electric',power:1800,kwhPrice:0.68,kgPrice:0,kgPerHour:0};
+      const v=document.getElementById('view');
+      v.innerHTML=`<div class='hero'><h2>⚙️ Equipamento Personalizado</h2><p>Adicione equipamentos extras ao cálculo</p></div><div class='grid'><div class='card'><div class='grid'><div><label>Nome do Equipamento</label><input id='ceq_name' class='input' value='${eq.name}' placeholder='Ex: Forno 2, Masseira'/></div><div><label>Tipo <button class='help-btn' onclick="UI.help('equipType')">?</button></label><select id='ceq_type' class='input' onchange='Views.custom_eq_change_type()'><option ${eq.type==='electric'?'selected':''} value='electric'>Elétrico</option><option ${eq.type==='gas'?'selected':''} value='gas'>Gás</option><option ${eq.type==='wood'?'selected':''} value='wood'>Lenha</option></select></div><div class='grid cols-2' id='ceq_fields'>${eq.type==='electric'?`<div><label>Preço kWh (R$) <button class='help-btn' onclick="UI.help('equipKwh')">?</button></label><input id='ceq_v1' class='input' type='number' step='0.01' value='${eq.kwhPrice}'/></div><div><label>Potência (W) <button class='help-btn' onclick="UI.help('equipPower')">?</button></label><input id='ceq_v2' class='input' type='number' step='1' value='${eq.power}'/></div>`:`<div><label>Preço (R$/kg) <button class='help-btn' onclick="UI.help('equipPrice')">?</button></label><input id='ceq_v1' class='input' type='number' step='0.01' value='${eq.kgPrice}'/></div><div><label>Consumo (kg/h) <button class='help-btn' onclick="UI.help('equipKg')">?</button></label><input id='ceq_v2' class='input' type='number' step='0.01' value='${eq.kgPerHour}'/></div>`}</div><div class='row' style='gap:10px;justify-content:flex-end;'><button class='btn secondary' onclick="Router.go('profile')">Cancelar</button><button class='btn' onclick="Views.custom_equipment_save('${id||''}')">Salvar</button></div></div></div></div>`;
+    },
+    custom_eq_change_type(){
+      const type=document.getElementById('ceq_type').value;
+      const container=document.getElementById('ceq_fields');
+      const defaults={electric:{v1:0.68,v2:1800,l1:'Preço kWh (R$)',l2:'Potência (W)',h1:'equipKwh',h2:'equipPower'},gas:{v1:8.0,v2:0.3,l1:'Preço (R$/kg)',l2:'Consumo (kg/h)',h1:'equipPrice',h2:'equipKg'},wood:{v1:2.5,v2:2.0,l1:'Preço (R$/kg)',l2:'Consumo (kg/h)',h1:'equipPrice',h2:'equipKg'}};
+      const d=defaults[type];
+      container.innerHTML=`<div><label>${d.l1} <button class='help-btn' onclick="UI.help('${d.h1}')">?</button></label><input id='ceq_v1' class='input' type='number' step='0.01' value='${d.v1}'/></div><div><label>${d.l2} <button class='help-btn' onclick="UI.help('${d.h2}')">?</button></label><input id='ceq_v2' class='input' type='number' step='${type==='electric'?'1':'0.01'}' value='${d.v2}'/></div>`;
+    },
+    custom_equipment_save(id){
+      const name=document.getElementById('ceq_name').value.trim();
+      const type=document.getElementById('ceq_type').value;
+      const v1=Utils.num(document.getElementById('ceq_v1').value);
+      const v2=Utils.num(document.getElementById('ceq_v2').value);
+      if(!name){UI.toast('Nome obrigatório','error');return}
+      if(v1<=0||v2<=0){UI.toast('Valores inválidos','error');return}
+      App.state.settings=App.state.settings||{};
+      App.state.settings.customEquipments=App.state.settings.customEquipments||[];
+      const data={id:id||Utils.id(),name,type};
+      if(type==='electric'){data.power=v2;data.kwhPrice=v1;}else{data.kgPrice=v1;data.kgPerHour=v2;}
+      if(id){const idx=App.state.settings.customEquipments.findIndex(e=>e.id===id);if(idx>-1)App.state.settings.customEquipments[idx]=data;}else{App.state.settings.customEquipments.push(data);}
+      App.save();UI.toast('Equipamento salvo','success');Router.go('profile');
+    },
+    custom_equipment_delete(id){
+      UI.modal('Excluir Equipamento',`<p>Tem certeza que deseja excluir este equipamento personalizado?</p><div class='row' style='gap:10px;justify-content:flex-end;margin-top:16px;'><button class='btn secondary' onclick='UI.closeModal()'>Cancelar</button><button class='btn error' onclick='(function(){App.state.settings.customEquipments=App.state.settings.customEquipments.filter(e=>e.id!=="${id}");App.save();UI.closeModal();Router.go("profile");})()'>Excluir</button></div>`);
+    }
+  }
+  // SafeStorage: wrappers com try/catch para localStorage
+  const SafeStorage={
+    get(key, fallback){try{const v=localStorage.getItem(key); return v===null||v===undefined?fallback:v}catch(e){console.warn('SafeStorage.get error',e); return fallback}},
+    set(key, value){try{localStorage.setItem(key,value)}catch(e){console.warn('SafeStorage.set error',e)}}
+  }
+  // Auth overlay and logic
+  const Auth={
+    ensureShellVisible(v){const appbar=document.querySelector('header.appbar');const tabs=document.querySelector('nav.tabs');if(appbar)appbar.style.display=v?'flex':'none';if(tabs)tabs.style.display=v?'grid':'none';},
+    render(){let s=document.getElementById('login-screen'); if(!s){ s=document.createElement('section'); s.id='login-screen'; s.className='auth-screen'; s.innerHTML=`<div class='auth-container'>
+      <div class='auth-logo'><div class='logo-icon'>🍞</div><h1>PadariaPro</h1><p>Calculadora de Precificação para Panificadores</p></div>
+      <div class='auth-tabs'><button class='tab-btn active' onclick="Auth.switch('login')">Login</button><button class='tab-btn' onclick="Auth.switch('register')">Registrar</button></div>
+      <form id='login-form' class='auth-form'>
+        <div class='form-group'><label>📧 Email</label><input type='email' id='login-email' placeholder='seu@email.com' required></div>
+        <div class='form-group'><label>🔐 Senha</label><input type='password' id='login-password' placeholder='Mínimo 6 caracteres' required></div>
+        <button type='submit' class='btn btn-primary btn-full'>Entrar</button>
+        <p class='auth-link'>Não tem conta? <a href='#' onclick="Auth.switch('register'); return false;">Registre-se aqui</a></p>
+      </form>
+      <form id='register-form' class='auth-form hidden'>
+        <div class='form-group'><label>👤 Nome Completo</label><input type='text' id='register-name' placeholder='Seu nome' required></div>
+        <div class='form-group'><label>📧 Email</label><input type='email' id='register-email' placeholder='seu@email.com' required></div>
+        <div class='form-group'><label>🔐 Senha</label><input type='password' id='register-password' placeholder='Mínimo 6 caracteres' required></div>
+        <div class='form-group'><label>🔐 Confirmar Senha</label><input type='password' id='register-password-confirm' placeholder='Confirme a senha' required></div>
+        <button type='submit' class='btn btn-primary btn-full'>Criar Conta</button>
+        <p class='auth-link'>Já tem conta? <a href='#' onclick="Auth.switch('login'); return false;">Faça login</a></p>
+      </form>
+    </div>`; document.body.appendChild(s); }
+      // bind events once
+      document.getElementById('login-form').onsubmit=(e)=>{e.preventDefault(); Auth.login();};
+      document.getElementById('register-form').onsubmit=(e)=>{e.preventDefault(); Auth.register();};
+    },
+    show(){Auth.render(); Auth.ensureShellVisible(false); document.getElementById('login-screen').style.display='flex';},
+    hide(){const el=document.getElementById('login-screen'); if(el) el.style.display='none'; Auth.ensureShellVisible(true);},
+    switch(tab){const loginF=document.getElementById('login-form'); const registerF=document.getElementById('register-form'); const tabs=[...document.querySelectorAll('.auth-tabs .tab-btn')]; tabs.forEach(b=>b.classList.remove('active')); if(tab==='login'){tabs[0]?.classList.add('active'); loginF.classList.remove('hidden'); registerF.classList.add('hidden');} else {tabs[1]?.classList.add('active'); loginF.classList.add('hidden'); registerF.classList.remove('hidden');}},
+    validateEmail(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)},
+    async login(){const email=document.getElementById('login-email').value.trim(); const password=document.getElementById('login-password').value; if(!email||!password){UI.toast('Preencha todos os campos','error');return} if(!Auth.validateEmail(email)){UI.toast('Email inválido','error');return} const users=JSON.parse(SafeStorage.get(AUTH_USERS_KEY,'[]')||'[]'); const user=users.find(u=>u.email===email); if(!user){UI.toast('Email não encontrado','error');return}
+      // Comparar com hash; migrar contas antigas em texto puro
+      const isHexHash = typeof user.password==='string' && /^[a-f0-9]{64}$/i.test(user.password);
+      if(isHexHash){ const hp=await Auth.hash(password); if(user.password!==hp){UI.toast('Senha incorreta','error');return} }
+      else { // legado: armazenado em texto puro
+        if(user.password!==password){UI.toast('Senha incorreta','error');return}
+        // migrar para hash
+        user.password=await Auth.hash(password); user.pwVersion='sha256'; SafeStorage.set(AUTH_USERS_KEY,JSON.stringify(users));
+      }
+      SafeStorage.set(AUTH_CURRENT_KEY,JSON.stringify(user)); UI.toast(`Bem-vindo, ${user.name||'usuário'}!`,'success'); setTimeout(()=>{ Auth.hide(); Router.replace('dashboard'); },500);},
+    async register(){const name=document.getElementById('register-name').value.trim(); const email=document.getElementById('register-email').value.trim(); const password=document.getElementById('register-password').value; const confirm=document.getElementById('register-password-confirm').value; if(!name||!email||!password||!confirm){UI.toast('Preencha todos os campos','error');return} if(!Auth.validateEmail(email)){UI.toast('Email inválido','error');return} if(password.length<6){UI.toast('Senha deve ter mínimo 6 caracteres','error');return} if(password!==confirm){UI.toast('Senhas não conferem','error');return} const users=JSON.parse(SafeStorage.get(AUTH_USERS_KEY,'[]')||'[]'); if(users.find(u=>u.email===email)){UI.toast('Email já registrado','error');return} const passwordHash=await Auth.hash(password); const newUser={id:Date.now(),name,email,password:passwordHash,pwVersion:'sha256',plan:'free',createdAt:new Date().toISOString()}; users.push(newUser); SafeStorage.set(AUTH_USERS_KEY,JSON.stringify(users)); SafeStorage.set(AUTH_CURRENT_KEY,JSON.stringify(newUser)); UI.toast('Conta criada com sucesso!','success'); setTimeout(()=>{ Auth.hide(); Router.replace('dashboard'); },500);},
+    async hash(str){try{const enc=new TextEncoder(); const buf=await crypto.subtle.digest('SHA-256',enc.encode(str)); const arr=[...new Uint8Array(buf)]; return arr.map(b=>b.toString(16).padStart(2,'0')).join('');}catch(e){console.warn('WebCrypto indisponível, fallback inseguro',e); return str}}
+    ,logout(){try{localStorage.removeItem(AUTH_CURRENT_KEY)}catch(e){console.warn('SafeStorage.remove error',e)} UI.toast('Logout realizado','success'); setTimeout(()=>{Auth.show();},300);}
+  }
+
+  // Lightweight wrappers for potential external CRUD calls
+  // Validators util
+  const Validators={
+    number(v){const n=Number(v); return Number.isFinite(n)?n:0},
+    positive(v){const n=Validators.number(v); return n>0},
+    nonNegative(v){const n=Validators.number(v); return n>=0},
+    percent(v,min=0,max=100){const n=Validators.number(v); return n>=min && n<=max},
+    email(e){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(e||''))},
+    password(p){return String(p||'').length>=6}
+  }
+  
+  // ====== API ======
+  const API={
+    addIngredient(d){if(!d?.name) return UI.toast('Nome obrigatório','error');return Store.add('ingredients',{name:d.name,price:d.price||0,qtyBought:d.quantity||0,unit:d.unit||'UNIDADE',stock:d.stock??(d.quantity||0)})},
+    editIngredient(id,d){return Store.update('ingredients',id,d)},
+    deleteIngredient(id){return Store.remove('ingredients',id)},
+    addPackage(d){return Store.add('packages',{name:d.name,price:d.price||0,stock:d.stock||0})},
+    editPackage(id,d){return Store.update('packages',id,d)},
+    deletePackage(id){return Store.remove('packages',id)},
+    addRecipe(r){return Store.add('recipes',r)}, editRecipe(id,r){return Store.update('recipes',id,r)}, deleteRecipe(id){return Store.remove('recipes',id)}
+  }
+  // Boot
+  UI.theme(); UI.initNumericSanitizer();
+  // load Chart.js and ensure dashboard chart renders when ready
+  (function(){const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/chart.js';s.defer=true; s.onload=()=>{ try{ if(typeof Chart!=='undefined' && Router.current==='dashboard'){ Views.renderCostChart(); Views.renderDistributionChart(); } }catch(e){} }; document.body.appendChild(s);})();
+  (function(){
+    let currentUser=localStorage.getItem(AUTH_CURRENT_KEY);
+    if(!currentUser){
+      // Offline test mode: create a temporary session and skip login
+      const offlineUser={id:'offline',name:'Offline',email:'offline@local',plan:'free'};
+      localStorage.setItem(AUTH_CURRENT_KEY, JSON.stringify(offlineUser));
+      currentUser=JSON.stringify(offlineUser);
+      Auth.ensureShellVisible(true);
+    }
+    const s=App.state.setup||{};
+    const incomplete=!(s.equipmentDone||(App.state.settings?.equipment?.type)) || (App.state.ingredients.length===0 && !s.ingredientsDone) || (App.state.recipes.length===0 && !s.recipeDone);
+    if(incomplete){ Router.render('welcome'); App.state.seenWelcome=true; App.save(); }
+    else { Router.render('dashboard'); }
+  })();
+  if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
+  // ===== FIREBASE CONFIGURATION =====
+  // Integração Firebase (compat) para Auth + Firestore
+  // Credenciais fornecidas pelo usuário
+  try{
+    if(window.firebase && !window._fbInit){
+      const firebaseConfig={
+        apiKey:"AIzaSyBxk4xx8ryQOEjX3RF_SG8LvHwzfwIwDog",
+        authDomain:"padariapro-d0759.firebaseapp.com",
+        projectId:"padariapro-d0759",
+        storageBucket:"padariapro-d0759.firebasestorage.app",
+        messagingSenderId:"988266568393",
+        appId:"1:988266568393:web:d17679e69c1ca19bd84b18",
+        measurementId:"G-959VTRM60N"
+      };
+      firebase.initializeApp(firebaseConfig);
+      window._fbInit=true;
+      window.auth=firebase.auth();
+      window.db=firebase.firestore();
+      window.functions=firebase.functions();
+      // ===== FIREBASE AUTH FUNCTIONS =====
+      window.FirebaseAuth={
+        register(email,password){
+          return auth.createUserWithEmailAndPassword(email,password).then(cred=>{
+            const user=cred.user; return db.collection('users').doc(user.uid).set({
+              email, plan:'free', createdAt:new Date(), ingredients:[], recipes:[], packages:[]
+            }).then(()=>user);
+          });
+        },
+        login(email,password){ return auth.signInWithEmailAndPassword(email,password); },
+        logout(){ return auth.signOut(); },
+        onAuthStateChanged(cb){ return auth.onAuthStateChanged(cb); },
+        getCurrentUser(){ return auth.currentUser; }
+      };
+      // ===== FIRESTORE SYNC FUNCTIONS =====
+      window.FirestoreDB={
+        saveUserData(uid,data){
+          return db.collection('users').doc(uid).update(data)
+            .catch(error=>{
+              if(error && (error.code==='not-found' || error.code==='not-found' || error.message?.includes('No document to update'))){
+                return db.collection('users').doc(uid).set(data,{merge:true});
+              }
+              throw error;
+            });
+        },
+        async getUserData(uid){ const doc=await db.collection('users').doc(uid).get(); return doc.data(); },
+        async syncToFirebase(uid){ const data={ ingredients:App.state.ingredients, recipes:App.state.recipes, packages:App.state.packages, plan:App.state.user.plan, lastSync:new Date() }; return this.saveUserData(uid,data); },
+        async syncFromFirebase(uid){ const data=await this.getUserData(uid); if(data){ App.state.ingredients=data.ingredients||[]; App.state.recipes=data.recipes||[]; App.state.packages=data.packages||[]; App.state.user.plan=data.plan||'free'; App.save(); } }
+      };
+      // ===== MONITOR AUTH CHANGES =====
+      FirebaseAuth.onAuthStateChanged(async (user)=>{
+        if(user){
+          try{ await FirestoreDB.syncFromFirebase(user.uid); App.state.user.email=user.email; App.state.user.uid=user.uid; App.save(); }catch(e){ console.error('Erro ao sincronizar',e); }
+          const lm=document.getElementById('loginModal'); if(lm) lm.style.display='none';
+        } else {
+          const lm=document.getElementById('loginModal'); if(lm) lm.style.display='flex';
+        }
+      });
+      // ===== LOGIN HANDLERS =====
+      window.showLoginView=function(){ const lv=document.getElementById('loginView'); const rv=document.getElementById('registerView'); if(lv) lv.style.display='block'; if(rv) rv.style.display='none'; };
+      window.showRegisterView=function(){ const lv=document.getElementById('loginView'); const rv=document.getElementById('registerView'); if(lv) lv.style.display='none'; if(rv) rv.style.display='block'; };
+      window.handleLogin=function(){ const email=document.getElementById('loginEmail')?.value||''; const password=document.getElementById('loginPassword')?.value||''; if(!email||!password){ UI.toast('❌ Preencha email e senha','error'); return } FirebaseAuth.login(email,password).then(()=>{ console.log('✓ Login'); const e=document.getElementById('loginEmail'); const p=document.getElementById('loginPassword'); if(e) e.value=''; if(p) p.value=''; }).catch(err=>{ const code=err?.code||''; const invalid = code==='auth/invalid-credential'||code==='auth/wrong-password'||code==='auth/user-not-found'; UI.toast(invalid?'E-mail ou senha inválidos':'Não foi possível fazer login. Tente novamente.','error'); }); };
+      window.handleRegister=function(){ const email=document.getElementById('registerEmail')?.value||''; const password=document.getElementById('registerPassword')?.value||''; if(!email||password.length<6){ alert('❌ Email obrigatório e senha com mínimo 6 caracteres'); return } FirebaseAuth.register(email,password).then(()=>{ console.log('✓ Conta criada'); window.showLoginView(); const e=document.getElementById('registerEmail'); const p=document.getElementById('registerPassword'); if(e) e.value=''; if(p) p.value=''; alert('✓ Conta criada! Faça login'); }).catch(err=>{ const code=err?.code||''; let msg='Não foi possível criar a conta. Tente novamente.'; if(code==='auth/email-already-in-use') msg='E-mail já cadastrado'; else if(code==='auth/invalid-email') msg='E-mail inválido'; else if(code==='auth/weak-password') msg='Senha muito fraca (mínimo 6 caracteres)'; alert('❌ '+msg); }); };
+      window.logout=function(){ FirebaseAuth.logout().then(()=>{ console.log('✓ Logout'); const modal=document.getElementById('loginModal'); if(modal) modal.style.display='flex'; }); };
+    }
+  }catch(e){ console.warn('Firebase não inicializado',e); }
+  
+  </script>
+  <style>
+  /* Auth screen styles */
+  .auth-screen{display:none;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#FAFAF8 0%,#F5F3F0 100%);position:fixed;inset:0;z-index:2000}
+  .auth-container{background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.15);padding:48px 32px;max-width:400px;width:90%}
+  /* Responsive fixes */
+  body{overflow-x:hidden}
+  img, canvas{max-width:100%;height:auto;display:block}
+  .card svg{max-width:100%;height:auto}
+  .card{overflow:hidden}
+  .grid.cols-2, .grid.cols-3{gap:16px}
+  @media (max-width: 720px){
+    .grid.cols-2, .grid.cols-3{grid-template-columns:1fr !important}
+    header.appbar{padding:10px 12px}
+  }
+  /* Modal sheet sizing for mobile */
+  .modal .sheet{width:min(560px,92vw);max-height:90vh;overflow:auto}
+  .auth-logo{text-align:center;margin-bottom:32px}
+  .logo-icon{font-size:64px;margin-bottom:12px}
+  .auth-logo h1{font-size:32px;font-weight:700;color:#6D4C41;margin:0}
+  .auth-logo p{font-size:14px;color:#79716E;margin-top:8px}
+  .auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:32px}
+  .auth-tabs .tab-btn{padding:12px 16px;border:2px solid #E8DDD6;background:transparent;border-radius:8px;cursor:pointer;font-weight:500;transition:all .2s}
+  .auth-tabs .tab-btn.active{background:#6D4C41;color:#fff;border-color:#6D4C41}
+  .auth-form.hidden{display:none}
+  .auth-form .form-group{margin-bottom:20px}
+  .auth-form .form-group label{display:block;font-weight:600;margin-bottom:8px;color:#1A1410}
+  .auth-form .form-group input{width:100%;padding:14px 16px;border:2px solid #E8DDD6;border-radius:8px;font-size:16px;transition:border-color .2s}
+  .auth-form .form-group input:focus{outline:none;border-color:#6D4C41;box-shadow:0 0 0 3px rgba(109,76,65,.1)}
+  .btn-primary{background:linear-gradient(135deg,#FFD700 0%,#FFA500 100%);color:#1A1410;font-weight:600;box-shadow:0 4px 12px rgba(255,215,0,.3)}
+  .btn-primary:hover{box-shadow:0 6px 20px rgba(255,215,0,.5);transform:scale(1.02)}
+  /* Card depth and animations */
+  .card{animation:fadeIn .4s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .modal .sheet{animation:slideUp .3s ease}
+  @keyframes slideUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+  /* Typography hierarchy */
+  h1{font-size:28px;font-weight:700;margin-bottom:12px}
+  h2{font-size:22px;font-weight:600;margin-bottom:12px}
+  h3{font-size:18px;font-weight:600;margin-bottom:8px}
+  h4{font-size:16px;font-weight:600;margin-bottom:4px}
+  small{font-size:14px}
+  /* Badges */
+  .badge-free{background:#79716E;color:#fff;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:600}
+  .badge-pro{background:#9C27B0;color:#fff;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:600}
+  .badge-business{background:linear-gradient(135deg,#FFD700,#FFA500);color:#1A1410;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:600}
+  /* Spinner */
+  .spinner{width:24px;height:24px;border:3px solid rgba(109,76,65,.1);border-top-color:#6D4C41;border-radius:50%;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,111,0,.4)}50%{box-shadow:0 0 0 12px rgba(255,111,0,0)}}
+  .card.pulse{animation:pulse 2s infinite}
+  </style>
+<script>
+  // Página comparativa PRO vs Free e fluxo de Upgrade
+  (function(){
+    // Override do UI.upgrade
+    if(window.UI){
+      window.UI.upgrade = function(){
+        if((window.App?.state?.user?.plan||'free')==='pro'){ return }
+        const msg = `
+          <div class='grid'>
+            <p>Recurso disponível apenas no plano <b>PRO</b>.</p>
+            <ul>
+              <li>Sem limites para ingredientes, receitas e embalagens</li>
+              <li>Ajuste de mão de obra e estratégias completas de preço</li>
+              <li>Configurações avançadas de equipamentos</li>
+            </ul>
+            <div class='row' style='justify-content:flex-end;gap:8px;'>
+              <button class='btn secondary' onclick='UI.closeModal()'>Fechar</button>
+              <button class='btn' onclick="(function(){ UI.closeModal(); Router.go('pricing'); })()">Conhecer Plano PRO →</button>
+            </div>
+          </div>`;
+        window.UI.modal('Plano PRO', msg);
+      };
+    }
+
+    // Define a view 'pricing'
+    if(!window.Views){ window.Views = {}; }
+    window.Views.pricing = function(){
+      var v=document.getElementById('view');
+      if(!v){ return; }
+      v.innerHTML = `
+        <div class='hero'>
+          <h2>💎 Planos</h2>
+          <p>Compare Free vs Pro</p>
+          <svg class='art' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'><defs><linearGradient id='g1' x1='0' x2='1' y1='0' y2='1'><stop offset='0' stop-color='var(--accent)'/><stop offset='1' stop-color='var(--accent-dark)'/></linearGradient></defs><path d='M0,80 C30,60 50,110 120,70 L120,120 L0,120 Z' fill='url(#g1)'/></svg>
+        </div>
+        <div class='grid'>
+          <div class='card'>
+            <h3 style='margin:0 0 8px 0'>🆓 Free</h3>
+            <ul style='margin:0;padding-left:18px'>
+              <li>Até 10 Ingredientes</li>
+              <li>Até 5 Embalagens</li>
+              <li>Até 3 Receitas</li>
+              <li>Sem edição avançada (equipamentos, mão de obra, estoque)</li>
+            </ul>
+          </div>
+          <div class='card'>
+            <h3 style='margin:0 0 8px 0'>💎 Pro</h3>
+            <ul style='margin:0;padding-left:18px'>
+              <li>Sem limites</li>
+              <li>Ajuste de Mão de Obra</li>
+              <li>Estratégias completas de preço</li>
+              <li>Edição de equipamentos e controle de estoque</li>
+            </ul>
+            <div class='row' style='justify-content:flex-end;margin-top:12px'>
+              <button class='btn' onclick="window.openStripeCheckout()">Assinar PRO - <b style='font-size:16px;'>R$ 9,99/mês</b></button>
+            </div>
+          </div>
+          <div class='row' style='justify-content:flex-end'>
+            <button class='btn secondary' onclick='Router.back()'>Voltar</button>
+          </div>
+        </div>`;
+    };
+  })();
+
+  // ==================== STRIPE INTEGRATION (LIMPO) ====================
+
+  const STRIPE_PUBLISHABLE_KEY = 'pk_test_51SONg9I9XxzZxv0BvU9BMmNjcxcbNXPa9e8badVraMHXTkr6w7NsWuX5mguL8byywF9ilCmr0iTk3I9xNm4LxUty00r9r3M1kA';
+  const STRIPE_BACKEND_URL = 'https://us-central1-padariapro-d0759.cloudfunctions.net';
+
+  // ==================== VERIFICAÇÃO DE PAGAMENTO ====================
+  
+  /**
+   * Verifica se o usuário retornou após pagamento bem-sucedido
+   */
+  function checkStripeReturn() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const success = urlParams.get("success");
+    const sessionId = urlParams.get("session_id");
+    
+    console.log("🔍 Verificando retorno Stripe:", { success, sessionId });
+    
+    // Detecta retorno bem-sucedido da Stripe
+    if (success === "true" || sessionId) {
+      console.log("✅ Retorno bem-sucedido da Stripe detectado");
+      startProVerification();
+    }
+  }
+
+  /**
+   * Inicia verificação do plano PRO no Firestore
+   * Usa listener em tempo real + polling como backup
+   */
+  function startProVerification() {
+    try {
+      const user = firebase.auth().currentUser;
+
+      if (!user || !user.uid) {
+        console.error("❌ Usuário não autenticado");
+        return;
+      }
+
+      console.log("🔄 Iniciando verificação de PRO para:", user.uid);
+
+      if (window.UI?.toast) {
+        window.UI.toast("Validando pagamento...", "success");
+      }
+
+      const db = firebase.firestore();
+      let done = false;
+      let unsub = null;
+      let attempts = 0;
+      const maxAttempts = 24; // 24 × 5s = 2 minutos
+
+      // Listener em tempo real (mais eficiente)
+      unsub = db.collection("users").doc(user.uid).onSnapshot((snap) => {
+        const data = snap.data();
+        console.log("📊 Firestore atualizado:", data?.plan);
+        
+        if (data && data.plan === "pro" && !done) {
+          console.log("✅ PLANO PRO ATIVADO!");
+          done = true;
+          
+          if (unsub) {
+            try { unsub(); } catch (e) {}
+          }
+
+          // Sincroniza estado local
+          App.state.user.plan = "pro";
+          App.save();
+
+          if (window.UI?.toast) {
+            window.UI.toast("🎉 Bem-vindo ao PRO!", "success");
+          }
+
+          // Limpa URL e redireciona
+          setTimeout(() => {
+            try {
+              window.history.replaceState(null, document.title, window.location.pathname);
+            } catch (e) {}
+            Router.go("dashboard");
+          }, 2000);
+        }
+      }, (error) => {
+        console.error("❌ Erro ao escutar Firestore:", error);
+      });
+
+      // Polling como backup (caso o listener falhe)
+      const checkInterval = setInterval(() => {
+        if (done) {
+          clearInterval(checkInterval);
+          return;
+        }
+
+        attempts++;
+        console.log(`⏳ Tentativa ${attempts}/${maxAttempts}...`);
+
+        if (attempts >= maxAttempts) {
+          clearInterval(checkInterval);
+          if (unsub) {
+            try { unsub(); } catch (e) {}
+          }
+
+          console.error("❌ Timeout: Pagamento não confirmado em 2 minutos");
+          if (window.UI?.toast) {
+            window.UI.toast("Verifique seu pagamento. Se já pagou, recarregue a página.", "error");
+          }
+        }
+      }, 5000);
+
+    } catch (e) {
+      console.error("❌ Erro em startProVerification:", e);
+    }
+  }
+
+  // ==================== INICIALIZAÇÃO ====================
+
+  // Verifica imediatamente ao carregar
+  (function initStripeCheck() {
+    try {
+      console.log("🚀 Inicializando verificação Stripe...");
+      
+      // Aguarda autenticação antes de verificar
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          checkStripeReturn();
+        }
+      });
+    } catch (e) {
+      console.error("Erro na inicialização:", e);
+    }
+  })();
+
+  // Verifica quando o usuário volta para a aba
+  window.addEventListener("focus", () => {
+    try {
+      const user = firebase.auth().currentUser;
+      if (user) {
+        checkStripeReturn();
+      }
+    } catch (e) {}
+  });
+</script>
+</body>
+</html>

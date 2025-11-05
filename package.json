@@ -1,0 +1,12 @@
+{
+  "name": "padariapro",
+  "version": "1.0.0",
+  "description": "PadariaPro - Calculadora de Preços para Panificação",
+  "scripts": {
+    "build": "echo 'Site estático - sem build necessário'"
+  },
+  "dependencies": {
+    "stripe": "^14.10.0"
+  },
+  "private": true
+}
