@@ -121,16 +121,27 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
  * Versão onRequest com CORS manual (mais compatível)
  */
 exports.createPortalLink = functions.https.onRequest(async (req, res) => {
-    // CORS headers
-    res.set('Access-Control-Allow-Origin', '*');
+    // CORS headers - Permitir todas as origens em desenvolvimento
+    const allowedOrigins = [
+        'https://padariapro.netlify.app',
+        'http://localhost:5000',
+        'http://localhost:8080',
+        'http://127.0.0.1:5000'
+    ];
+    
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin) || !origin) {
+        res.set('Access-Control-Allow-Origin', origin || '*');
+    }
+    
     res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.set('Access-Control-Max-Age', '3600');
+    res.set('Access-Control-Allow-Credentials', 'true');
 
     // Handle preflight
     if (req.method === 'OPTIONS') {
-        res.status(204).send('');
-        return;
+        return res.status(204).send('');
     }
 
     // Só aceita POST
@@ -142,6 +153,102 @@ exports.createPortalLink = functions.https.onRequest(async (req, res) => {
         // Pega o token de autenticação
         const authHeader = req.headers.authorization;
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            console.error('❌ Header de autorização inválido');
+            return res.status(401).json({ error: 'Não autenticado. Faça login novamente.' });
+        }
+
+        const idToken = authHeader.split('Bearer ')[1];
+        let decodedToken;
+        
+        try {
+            decodedToken = await admin.auth().verifyIdToken(idToken);
+        } catch (authError) {
+            console.error('❌ Erro ao verificar token:', authError);
+            return res.status(401).json({ error: 'Token inválido ou expirado. Faça login novamente.' });
+        }
+        
+        const uid = decodedToken.uid;
+        console.log('📋 Portal solicitado para UID:', uid);
+
+        const userDoc = await db.collection('users').doc(uid).get();
+        
+        if (!userDoc.exists) {
+            console.error('❌ Usuário não encontrado no Firestore:', uid);
+            return res.status(404).json({ error: 'Usuário não encontrado no sistema.' });
+        }
+        
+        const userData = userDoc.data();
+
+        if (!userData.stripeCustomerId) {
+            console.error('❌ Cliente Stripe não encontrado para UID:', uid);
+            return res.status(404).json({ 
+                error: 'Cliente Stripe não encontrado. Você precisa ter uma assinatura ativa.' 
+            });
+        }
+
+        console.log('✅ Criando portal para customer:', userData.stripeCustomerId);
+
+        const returnUrl = req.body.returnUrl || 'https://padariapro.netlify.app/';
+        
+        try {
+            const session = await stripe.billingPortal.sessions.create({
+                customer: userData.stripeCustomerId,
+                return_url: returnUrl,
+            });
+
+            console.log('✅ Portal URL criada:', session.url);
+            return res.status(200).json({ url: session.url, success: true });
+        } catch (stripeError) {
+            console.error('❌ Erro ao criar sessão do Stripe:', stripeError);
+            return res.status(500).json({ 
+                error: 'Erro ao criar portal de pagamento. Tente novamente.' 
+            });
+        }
+    } catch (error) {
+        console.error('❌ Erro inesperado ao criar portal link:', error);
+        return res.status(500).json({ 
+            error: 'Erro interno do servidor. Tente novamente mais tarde.',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
+});
+
+/**
+ * Função para cancelar assinatura do usuário
+ */
+exports.cancelSubscription = functions.https.onRequest(async (req, res) => {
+    // CORS headers
+    const allowedOrigins = [
+        'https://padariapro.netlify.app',
+        'http://localhost:5000',
+        'http://localhost:8080',
+        'http://127.0.0.1:5000'
+    ];
+    
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin) || !origin) {
+        res.set('Access-Control-Allow-Origin', origin || '*');
+    }
+    
+    res.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.set('Access-Control-Max-Age', '3600');
+    res.set('Access-Control-Allow-Credentials', 'true');
+
+    // Handle preflight
+    if (req.method === 'OPTIONS') {
+        return res.status(204).send('');
+    }
+
+    // Só aceita POST
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+        // Verificar autenticação
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
             return res.status(401).json({ error: 'Não autenticado' });
         }
 
@@ -149,28 +256,54 @@ exports.createPortalLink = functions.https.onRequest(async (req, res) => {
         const decodedToken = await admin.auth().verifyIdToken(idToken);
         const uid = decodedToken.uid;
 
-        console.log('📋 Portal solicitado para UID:', uid);
+        console.log('🚫 Cancelamento solicitado para UID:', uid);
 
+        // Buscar dados do usuário
         const userDoc = await db.collection('users').doc(uid).get();
-        const userData = userDoc.data();
-
-        if (!userData || !userData.stripeCustomerId) {
-            console.error('❌ Cliente Stripe não encontrado para UID:', uid);
-            return res.status(404).json({ error: 'Cliente Stripe não encontrado' });
+        if (!userDoc.exists) {
+            return res.status(404).json({ error: 'Usuário não encontrado' });
         }
 
-        console.log('✅ Criando portal para customer:', userData.stripeCustomerId);
+        const userData = userDoc.data();
+        const subscriptionId = userData.subscriptionId;
 
-        const returnUrl = req.body.returnUrl || 'https://padariapro.netlify.app/';
-        const session = await stripe.billingPortal.sessions.create({
-            customer: userData.stripeCustomerId,
-            return_url: returnUrl,
-        });
+        if (!subscriptionId) {
+            return res.status(404).json({ 
+                error: 'Nenhuma assinatura ativa encontrada' 
+            });
+        }
 
-        console.log('✅ Portal URL criada:', session.url);
-        return res.status(200).json({ url: session.url });
+        // Cancelar assinatura na Stripe
+        try {
+            const subscription = await stripe.subscriptions.update(subscriptionId, {
+                cancel_at_period_end: true
+            });
+
+            // Atualizar status no Firestore
+            await userDoc.ref.update({
+                subscriptionStatus: 'canceling',
+                cancelAt: admin.firestore.Timestamp.fromDate(new Date(subscription.cancel_at * 1000)),
+                lastUpdated: admin.firestore.FieldValue.serverTimestamp()
+            });
+
+            console.log('✅ Assinatura marcada para cancelamento:', subscriptionId);
+            
+            return res.status(200).json({ 
+                success: true,
+                message: 'Assinatura será cancelada no fim do período',
+                cancelAt: new Date(subscription.cancel_at * 1000).toISOString()
+            });
+        } catch (stripeError) {
+            console.error('❌ Erro ao cancelar na Stripe:', stripeError);
+            return res.status(500).json({ 
+                error: 'Erro ao cancelar assinatura. Tente novamente.' 
+            });
+        }
     } catch (error) {
-        console.error('❌ Erro ao criar portal link:', error);
-        return res.status(500).json({ error: error.message });
+        console.error('❌ Erro ao cancelar assinatura:', error);
+        return res.status(500).json({ 
+            error: 'Erro interno do servidor',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
     }
 });

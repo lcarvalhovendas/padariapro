@@ -909,30 +909,87 @@ window.openStripeCheckout = function() {
       </div>`; },
     async manageSubscription(){
       try{
+        console.log('🔄 Iniciando manageSubscription...');
         const user=firebase.auth().currentUser;
-        if(!user){ UI.toast('Usuário não autenticado','error'); return; }
+        
+        if(!user){ 
+          console.error('❌ Usuário não autenticado');
+          UI.toast('Você precisa estar logado para acessar o portal','error'); 
+          return; 
+        }
+        
+        console.log('✅ Usuário autenticado:', user.uid);
+        
+        // Buscar dados do usuário
         const userDoc=await firebase.firestore().collection('users').doc(user.uid).get();
-        const customerId=userDoc.data()?.stripeCustomerId;
-        if(!customerId){ UI.toast('Cliente Stripe não encontrado','error'); return; }
-        UI.toast('Abrindo portal...','normal');
+        
+        if(!userDoc.exists){
+          console.error('❌ Documento do usuário não existe');
+          UI.toast('Dados do usuário não encontrados','error');
+          return;
+        }
+        
+        const userData = userDoc.data();
+        const customerId=userData?.stripeCustomerId;
+        
+        if(!customerId){ 
+          console.error('❌ Cliente Stripe não encontrado para o usuário');
+          UI.toast('Você precisa ter uma assinatura ativa para acessar o portal','error'); 
+          return; 
+        }
+        
+        console.log('✅ Cliente Stripe encontrado:', customerId);
+        UI.toast('Abrindo portal de gerenciamento...','normal');
         
         // Pega token de autenticação
-        const token=await user.getIdToken();
+        const token=await user.getIdToken(true); // Force refresh
+        console.log('✅ Token obtido');
+        
+        // Configurar timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
         
         // Chama função via fetch com CORS
+        console.log('🔄 Chamando Cloud Function createPortalLink...');
         const response=await fetch('https://us-central1-padariapro-d0759.cloudfunctions.net/createPortalLink', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify({returnUrl: window.location.origin})
+          body: JSON.stringify({returnUrl: window.location.origin}),
+          signal: controller.signal
         });
         
+        clearTimeout(timeoutId);
+        console.log('✅ Resposta recebida, status:', response.status);
+        
+        if(!response.ok){
+          const errorText = await response.text();
+          console.error('❌ Erro na resposta:', response.status, errorText);
+          UI.toast(`Erro ao criar portal (${response.status}). Tente novamente.`,'error');
+          return;
+        }
+        
         const result=await response.json();
-        if(result.url){ window.location.href=result.url; }
-        else{ UI.toast('Erro ao criar portal: '+(result.error||'desconhecido'),'error'); }
-      }catch(e){ console.error(e); UI.toast('Erro ao acessar portal: '+e.message,'error'); }
+        console.log('📦 Resultado:', result);
+        
+        if(result.url && result.success){ 
+          console.log('✅ Redirecionando para:', result.url);
+          window.location.href=result.url; 
+        }
+        else{ 
+          console.error('❌ Resposta sem URL válida:', result);
+          UI.toast('Erro: '+(result.error||'Resposta inválida do servidor'),'error'); 
+        }
+      }catch(e){ 
+        console.error('❌ Erro ao acessar portal:', e); 
+        if(e.name === 'AbortError'){
+          UI.toast('Tempo limite excedido. Verifique sua conexão e tente novamente.','error');
+        } else {
+          UI.toast('Erro ao acessar portal: '+e.message,'error'); 
+        }
+      }
     },
     cancelSubscription(){
       UI.modal('Cancelar Assinatura PRO', `
@@ -945,13 +1002,85 @@ window.openStripeCheckout = function() {
             <li>Seus dados serão preservados</li>
             <li>Você pode reativar a qualquer momento</li>
           </ul>
-          <p class='hint'>Para confirmar o cancelamento, clique em "Abrir Portal" e cancele diretamente no painel do Stripe.</p>
-          <div class='row' style='gap:10px;justify-content:flex-end;margin-top:16px;'>
+          <p class='hint'>Escolha uma opção abaixo para gerenciar seu cancelamento:</p>
+          <div class='row' style='gap:10px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap;'>
             <button class='btn secondary' onclick='UI.closeModal()'>Voltar</button>
-            <button class='btn' onclick='UI.closeModal(); Views.manageSubscription()'>Abrir Portal</button>
+            <button class='btn' onclick='UI.closeModal(); Views.manageSubscription()'>Abrir Portal Stripe</button>
+            <button class='btn error' id='confirmCancelBtn' onclick='Views.confirmCancelSubscription()'>Cancelar Agora</button>
           </div>
         </div>
       `);
+    },
+    async confirmCancelSubscription(){
+      UI.closeModal();
+      try{
+        console.log('🔄 Iniciando confirmCancelSubscription...');
+        const user=firebase.auth().currentUser;
+        
+        if(!user){ 
+          console.error('❌ Usuário não autenticado');
+          UI.toast('Você precisa estar logado','error'); 
+          return; 
+        }
+        
+        console.log('✅ Usuário autenticado:', user.uid);
+        UI.toast('Processando cancelamento...','normal');
+        
+        // Pega token de autenticação
+        const token=await user.getIdToken(true);
+        console.log('✅ Token obtido');
+        
+        // Configurar timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+        
+        // Chama função via fetch
+        console.log('🔄 Chamando Cloud Function cancelSubscription...');
+        const response=await fetch('https://us-central1-padariapro-d0759.cloudfunctions.net/cancelSubscription', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        console.log('✅ Resposta recebida, status:', response.status);
+        
+        if(!response.ok){
+          const errorText = await response.text();
+          console.error('❌ Erro na resposta:', response.status, errorText);
+          UI.toast(`Erro ao cancelar (${response.status}). Tente novamente.`,'error');
+          return;
+        }
+        
+        const result=await response.json();
+        console.log('📦 Resultado:', result);
+        
+        if(result.success){ 
+          console.log('✅ Cancelamento agendado com sucesso');
+          UI.toast('Assinatura cancelada! Você terá acesso PRO até o fim do período.','success');
+          
+          // Atualizar estado local
+          App.state.user.subscriptionStatus = 'canceling';
+          App.save();
+          
+          // Recarregar perfil
+          setTimeout(() => Router.go('profile'), 2000);
+        }
+        else{ 
+          console.error('❌ Falha no cancelamento:', result);
+          UI.toast('Erro: '+(result.error||'Não foi possível cancelar'),'error'); 
+        }
+      }catch(e){ 
+        console.error('❌ Erro ao cancelar:', e); 
+        if(e.name === 'AbortError'){
+          UI.toast('Tempo limite excedido. Tente novamente.','error');
+        } else {
+          UI.toast('Erro ao cancelar: '+e.message,'error'); 
+        }
+      }
     },
     recipes_form(id){const r=App.state.recipes.find(x=>x.id===id)||{name:'',yieldQty:1,yieldUnit:'UNIDADE',items:[],packageId:'',packageQty:1,method:'',notes:'',bakeTime:40,mixTime:0,equipment:{primary:'oven',secondary:[]}};
       // Normalize units for existing items
