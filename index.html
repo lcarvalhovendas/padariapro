@@ -878,11 +878,8 @@ window.openStripeCheckout = function() {
         ${plan==='pro'?`<div class='card'>
           <h3 style='margin-top:0'>💎 Gerenciar Assinatura PRO</h3>
           <p>Você está no plano <b>PRO</b>! Gerencie sua assinatura:</p>
-          <div class='row' style='gap:8px; flex-wrap:wrap'>
-            <button class='btn secondary' onclick='Views.manageSubscription()'>Portal de Assinatura</button>
-            <button class='btn error' onclick='Views.cancelSubscription()'>Cancelar Assinatura</button>
-          </div>
-          <p class='hint' style='margin-top:12px'>O portal permite alterar forma de pagamento, visualizar faturas e fazer o cancelamento.</p>
+          <button class='btn' onclick='Views.manageSubscription()'>🔐 Acessar Portal de Assinatura</button>
+          <p class='hint' style='margin-top:12px'>No portal você pode: alterar forma de pagamento, visualizar faturas, gerenciar e cancelar sua assinatura.</p>
         </div>`:''}
 
         <div class='card'>
