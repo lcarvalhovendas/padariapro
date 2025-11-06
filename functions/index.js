@@ -93,12 +93,28 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
                 const userDoc = usersSnapshot.docs[0];
                 const newPlan = subscription.status === 'active' ? 'pro' : 'free';
                 
-                await userDoc.ref.update({
+                // Dados a serem atualizados
+                const updateData = {
                     subscriptionStatus: subscription.status,
                     subscriptionId: subscription.id,
                     plan: newPlan,
                     lastUpdated: admin.firestore.FieldValue.serverTimestamp()
-                });
+                };
+
+                // Se a assinatura está marcada para cancelar no fim do período
+                if (subscription.cancel_at_period_end) {
+                    updateData.cancelAtPeriodEnd = true;
+                    updateData.subscriptionExpiresAt = admin.firestore.Timestamp.fromDate(
+                        new Date(subscription.current_period_end * 1000)
+                    );
+                    console.log(`⚠️ Assinatura será cancelada em: ${new Date(subscription.current_period_end * 1000).toLocaleString('pt-BR')}`);
+                } else {
+                    // Remove flags de cancelamento se a assinatura foi reativada
+                    updateData.cancelAtPeriodEnd = false;
+                    updateData.subscriptionExpiresAt = admin.firestore.FieldValue.delete();
+                }
+                
+                await userDoc.ref.update(updateData);
                 
                 console.log(`✅ Assinatura atualizada para usuário ${userDoc.id}. Plano: ${newPlan}`);
             }

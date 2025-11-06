@@ -877,9 +877,15 @@ window.openStripeCheckout = function() {
 
         ${plan==='pro'?`<div class='card'>
           <h3 style='margin-top:0'>💎 Gerenciar Assinatura PRO</h3>
+          ${App.state.user.cancelAtPeriodEnd?`
+          <div style='padding:12px; background:#FFF3CD; border-left:4px solid #FFC107; border-radius:4px; margin-bottom:12px'>
+            <p style='margin:0; color:#856404'><b>⚠️ Assinatura será cancelada</b></p>
+            <p style='margin:4px 0 0 0; font-size:14px; color:#856404'>Você terá acesso PRO até: <b>${App.state.user.subscriptionExpiresAt?new Date(App.state.user.subscriptionExpiresAt.seconds*1000).toLocaleDateString('pt-BR'):'-'}</b></p>
+          </div>
+          `:''}
           <p>Você está no plano <b>PRO</b>! Gerencie sua assinatura:</p>
           <button class='btn' onclick='Views.manageSubscription()'>🔐 Acessar Portal de Assinatura</button>
-          <p class='hint' style='margin-top:12px'>No portal você pode: alterar forma de pagamento, visualizar faturas, gerenciar e cancelar sua assinatura.</p>
+          <p class='hint' style='margin-top:12px'>No portal você pode: alterar forma de pagamento, visualizar faturas, ${App.state.user.cancelAtPeriodEnd?'reativar ou':'gerenciar e cancelar sua'} assinatura.</p>
         </div>`:''}
 
         <div class='card'>
