@@ -1722,13 +1722,18 @@ window.openStripeCheckout = function() {
           done = true;
           
           // 📊 Meta Pixel: Rastrear compra concluída
+          console.log("🔍 Verificando fbq:", typeof fbq);
           if(typeof fbq !== 'undefined'){ 
+            console.log("✅ Disparando evento Purchase");
             fbq('track', 'Purchase', {
               value: 9.99,
               currency: 'BRL',
               content_name: 'PadariaPro - Plano PRO',
               content_type: 'product'
-            }); 
+            });
+            console.log("✅ Evento Purchase enviado"); 
+          } else {
+            console.error("❌ fbq não definido!");
           }
           
           if (unsub) {
