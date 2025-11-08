@@ -29,6 +29,25 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '831831922997094');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=831831922997094&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
+  
   <style>
 /* Cole este novo CSS substituindo TODO o conteúdo dentro da tag <style> */
 :root {
@@ -392,6 +411,15 @@ window.openStripeCheckout = function() {
     }
 
     console.log("✅ User autenticado:", user.uid);
+
+    // 📊 Meta Pixel: Rastrear intenção de compra
+    if(typeof fbq !== 'undefined'){ 
+      fbq('track', 'InitiateCheckout', {
+        value: 9.99,
+        currency: 'BRL',
+        content_name: 'PadariaPro - Plano PRO'
+      }); 
+    }
 
     // ✅ Enviando apenas o UID via client_reference_id
     const stripeUrl = `https://buy.stripe.com/test_00w3cvfVgbJB8hjcOqdnW01?client_reference_id=${user.uid}`;
@@ -1513,8 +1541,8 @@ window.openStripeCheckout = function() {
       // ===== LOGIN HANDLERS =====
       window.showLoginView=function(){ const lv=document.getElementById('loginView'); const rv=document.getElementById('registerView'); if(lv) lv.style.display='block'; if(rv) rv.style.display='none'; };
       window.showRegisterView=function(){ const lv=document.getElementById('loginView'); const rv=document.getElementById('registerView'); if(lv) lv.style.display='none'; if(rv) rv.style.display='block'; };
-      window.handleLogin=function(){ const email=document.getElementById('loginEmail')?.value||''; const password=document.getElementById('loginPassword')?.value||''; if(!email||!password){ UI.toast('❌ Preencha email e senha','error'); return } FirebaseAuth.login(email,password).then(()=>{ console.log('✓ Login'); const e=document.getElementById('loginEmail'); const p=document.getElementById('loginPassword'); if(e) e.value=''; if(p) p.value=''; }).catch(err=>{ const code=err?.code||''; const invalid = code==='auth/invalid-credential'||code==='auth/wrong-password'||code==='auth/user-not-found'; UI.toast(invalid?'E-mail ou senha inválidos':'Não foi possível fazer login. Tente novamente.','error'); }); };
-      window.handleRegister=function(){ const email=document.getElementById('registerEmail')?.value||''; const password=document.getElementById('registerPassword')?.value||''; if(!email||password.length<6){ alert('❌ Email obrigatório e senha com mínimo 6 caracteres'); return } FirebaseAuth.register(email,password).then(()=>{ console.log('✓ Conta criada'); window.showLoginView(); const e=document.getElementById('registerEmail'); const p=document.getElementById('registerPassword'); if(e) e.value=''; if(p) p.value=''; alert('✓ Conta criada! Faça login'); }).catch(err=>{ const code=err?.code||''; let msg='Não foi possível criar a conta. Tente novamente.'; if(code==='auth/email-already-in-use') msg='E-mail já cadastrado'; else if(code==='auth/invalid-email') msg='E-mail inválido'; else if(code==='auth/weak-password') msg='Senha muito fraca (mínimo 6 caracteres)'; alert('❌ '+msg); }); };
+      window.handleLogin=function(){ const email=document.getElementById('loginEmail')?.value||''; const password=document.getElementById('loginPassword')?.value||''; if(!email||!password){ UI.toast('❌ Preencha email e senha','error'); return } FirebaseAuth.login(email,password).then(()=>{ console.log('✓ Login'); if(typeof fbq !== 'undefined'){ fbq('track', 'Lead'); } const e=document.getElementById('loginEmail'); const p=document.getElementById('loginPassword'); if(e) e.value=''; if(p) p.value=''; }).catch(err=>{ const code=err?.code||''; const invalid = code==='auth/invalid-credential'||code==='auth/wrong-password'||code==='auth/user-not-found'; UI.toast(invalid?'E-mail ou senha inválidos':'Não foi possível fazer login. Tente novamente.','error'); }); };
+      window.handleRegister=function(){ const email=document.getElementById('registerEmail')?.value||''; const password=document.getElementById('registerPassword')?.value||''; if(!email||password.length<6){ alert('❌ Email obrigatório e senha com mínimo 6 caracteres'); return } FirebaseAuth.register(email,password).then(()=>{ console.log('✓ Conta criada'); if(typeof fbq !== 'undefined'){ fbq('track', 'CompleteRegistration'); } window.showLoginView(); const e=document.getElementById('registerEmail'); const p=document.getElementById('registerPassword'); if(e) e.value=''; if(p) p.value=''; alert('✓ Conta criada! Faça login'); }).catch(err=>{ const code=err?.code||''; let msg='Não foi possível criar a conta. Tente novamente.'; if(code==='auth/email-already-in-use') msg='E-mail já cadastrado'; else if(code==='auth/invalid-email') msg='E-mail inválido'; else if(code==='auth/weak-password') msg='Senha muito fraca (mínimo 6 caracteres)'; alert('❌ '+msg); }); };
       window.logout=function(){ FirebaseAuth.logout().then(()=>{ console.log('✓ Logout'); const modal=document.getElementById('loginModal'); if(modal) modal.style.display='flex'; }); };
     }
   }catch(e){ console.warn('Firebase não inicializado',e); }
@@ -1692,6 +1720,16 @@ window.openStripeCheckout = function() {
         if (data && data.plan === "pro" && !done) {
           console.log("✅ PLANO PRO ATIVADO!");
           done = true;
+          
+          // 📊 Meta Pixel: Rastrear compra concluída
+          if(typeof fbq !== 'undefined'){ 
+            fbq('track', 'Purchase', {
+              value: 9.99,
+              currency: 'BRL',
+              content_name: 'PadariaPro - Plano PRO',
+              content_type: 'product'
+            }); 
+          }
           
           if (unsub) {
             try { unsub(); } catch (e) {}
