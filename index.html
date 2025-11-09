@@ -1440,7 +1440,7 @@ window.openStripeCheckout = function() {
         user.password=await Auth.hash(password); user.pwVersion='sha256'; SafeStorage.set(AUTH_USERS_KEY,JSON.stringify(users));
       }
       SafeStorage.set(AUTH_CURRENT_KEY,JSON.stringify(user)); if(typeof fbq!=='undefined'){fbq('track','Lead',{content_name:'Login PadariaPro',user_plan:user.plan||'free'})}; UI.toast(`Bem-vindo, ${user.name||'usuário'}!`,'success'); setTimeout(()=>{ Auth.hide(); Router.replace('dashboard'); },500);},
-    async register(){const name=document.getElementById('register-name').value.trim(); const email=document.getElementById('register-email').value.trim(); const password=document.getElementById('register-password').value; const confirm=document.getElementById('register-password-confirm').value; if(!name||!email||!password||!confirm){UI.toast('Preencha todos os campos','error');return} if(!Auth.validateEmail(email)){UI.toast('Email inválido','error');return} if(password.length<6){UI.toast('Senha deve ter mínimo 6 caracteres','error');return} if(password!==confirm){UI.toast('Senhas não conferem','error');return} const users=JSON.parse(SafeStorage.get(AUTH_USERS_KEY,'[]')||'[]'); if(users.find(u=>u.email===email)){UI.toast('Email já registrado','error');return} const passwordHash=await Auth.hash(password); const newUser={id:Date.now(),name,email,password:passwordHash,pwVersion:'sha256',plan:'free',createdAt:new Date().toISOString()}; users.push(newUser); SafeStorage.set(AUTH_USERS_KEY,JSON.stringify(users)); SafeStorage.set(AUTH_CURRENT_KEY,JSON.stringify(newUser)); if(typeof fbq!=='undefined'){fbq('track','CompleteRegistration',{content_name:'PadariaPro - Novo Usuário',status:'free'})}; UI.toast('Conta criada com sucesso!','success'); setTimeout(()=>{ Auth.hide(); Router.replace('obrigado'); },500);},
+    async register(){const name=document.getElementById('register-name').value.trim(); const email=document.getElementById('register-email').value.trim(); const password=document.getElementById('register-password').value; const confirm=document.getElementById('register-password-confirm').value; if(!name||!email||!password||!confirm){UI.toast('Preencha todos os campos','error');return} if(!Auth.validateEmail(email)){UI.toast('Email inválido','error');return} if(password.length<6){UI.toast('Senha deve ter mínimo 6 caracteres','error');return} if(password!==confirm){UI.toast('Senhas não conferem','error');return} const users=JSON.parse(SafeStorage.get(AUTH_USERS_KEY,'[]')||'[]'); if(users.find(u=>u.email===email)){UI.toast('Email já registrado','error');return} const passwordHash=await Auth.hash(password); const newUser={id:Date.now(),name,email,password:passwordHash,pwVersion:'sha256',plan:'free',createdAt:new Date().toISOString()}; users.push(newUser); SafeStorage.set(AUTH_USERS_KEY,JSON.stringify(users)); SafeStorage.set(AUTH_CURRENT_KEY,JSON.stringify(newUser)); if(typeof fbq!=='undefined'){fbq('track','CompleteRegistration',{content_name:'PadariaPro - Novo Usuário',status:'free'})}; UI.toast('Conta criada com sucesso!','success'); setTimeout(()=>{ Auth.hide(); window.location.href='/?cadastro=sucesso'; },500);},
     async hash(str){try{const enc=new TextEncoder(); const buf=await crypto.subtle.digest('SHA-256',enc.encode(str)); const arr=[...new Uint8Array(buf)]; return arr.map(b=>b.toString(16).padStart(2,'0')).join('');}catch(e){console.warn('WebCrypto indisponível, fallback inseguro',e); return str}}
     ,logout(){try{localStorage.removeItem(AUTH_CURRENT_KEY)}catch(e){console.warn('SafeStorage.remove error',e)} UI.toast('Logout realizado','success'); setTimeout(()=>{Auth.show();},300);}
   }
@@ -1809,6 +1809,21 @@ window.openStripeCheckout = function() {
       console.error("Erro na inicialização:", e);
     }
   })();
+
+  // Detector de cadastro bem-sucedido (Google Ads)
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('cadastro') === 'sucesso') {
+    setTimeout(() => {
+      UI.modal('🎉 Conta Criada com Sucesso!', `
+        <div style='text-align:center; padding:20px;'>
+          <div style='font-size:64px; margin:20px 0;'>✅</div>
+          <h3 style='margin:0 0 12px 0; color:#2E7D32;'>Cadastro Concluído!</h3>
+          <p style='margin:0 0 20px 0; color:#1B5E20;'>Agora você tem acesso à calculadora profissional de preços para panificação.</p>
+          <button class='btn' style='background:#4CAF50;' onclick="UI.closeModal(); window.history.replaceState({}, '', '/'); Router.replace('welcome');">Começar Configuração →</button>
+        </div>
+      `);
+    }, 500);
+  }
 
   // Verifica quando o usuário volta para a aba
   window.addEventListener("focus", () => {
